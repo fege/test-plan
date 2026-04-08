@@ -78,7 +78,7 @@ SCHEMAS = {
         "test_case_id": {
             "type": "string",
             "required": True,
-            "pattern": r"^TC-[A-Z]+-\d+$",
+            "pattern": r"^TC-[A-Z0-9]+-\d+$",
         },
         "strat_key": {
             "type": "string",
