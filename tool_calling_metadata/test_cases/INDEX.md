@@ -7,9 +7,9 @@
 
 | Metric | Count |
 |--------|-------|
-| Total Test Cases | 28 |
+| Total Test Cases | 31 |
 | P0 (Critical) | 9 |
-| P1 (High) | 15 |
+| P1 (High) | 18 |
 | P2 (Medium) | 4 |
 
 ---
@@ -66,3 +66,11 @@
 | [TC-VER-001](TC-VER-001.md) | Update chat template path for new RHAIIS version | P1 |
 | [TC-VER-002](TC-VER-002.md) | Update tool_call_parser for ModelCar image update | P1 |
 | [TC-VER-003](TC-VER-003.md) | Multiple model versions with different template paths coexist | P2 |
+
+## UPG — Upgrade Testing
+
+| Test Case ID | Title | Priority |
+|-------------|-------|----------|
+| [TC-UPG-001](TC-UPG-001.md) | Tool-calling metadata preserved after RHOAI platform upgrade | P1 |
+| [TC-UPG-002](TC-UPG-002.md) | Database schema migration completes successfully during upgrade | P1 |
+| [TC-UPG-003](TC-UPG-003.md) | Ingestion pipeline and API function correctly after RHOAI upgrade | P1 |

@@ -1,7 +1,7 @@
 ---
 feature: Tool Calling Metadata Integration
 strat_key: RHAISTRAT-1262
-version: 1.0.1
+version: 1.0.2
 status: In Review
 author: RHOAI QA Team
 additional_docs:
@@ -57,16 +57,19 @@ The Model Validation team confirms a model's compatibility and specific CLI requ
 - **Data Validation Testing** — Validate metadata schema can store CLI arguments (--enable-auto-tool-choice, --tool-call-parser), chat template paths, and boolean flags correctly
 - **Functional Testing** — Test ingestion pipeline workflow, metadata display in model cards, and filtering by 'Tool Calling' task in UI
 - **UI Testing** — Verify tool-calling metadata renders correctly in model cards, new 'Tool Calling' filter appears in left navigation, and models tagged as "Tool Calling Enabled" are backed by validated catalog entries
+- **Upgrade Testing** — Verify tool-calling metadata is preserved and accessible after RHOAI platform upgrades, database schema migrations complete successfully, and API consumers continue to function with stored metadata post-upgrade
 
 ### 2.2 Test Types
 - **Positive Testing** — Valid metadata ingestion for validated models, successful API retrieval of tool-calling attributes, correct display of CLI arguments in model cards
 - **Negative Testing** — Models without tool-calling metadata don't show TC fields, invalid metadata formats are rejected, filtering excludes non-TC models
 - **Boundary Testing** — Large sets of CLI arguments, multiple model versions with different template paths, edge cases in metadata schema fields
 - **Regression Testing** — Existing Model Catalog functionality remains intact, non-TC models display correctly, current API consumers are not broken by schema changes
+- **Upgrade Testing** — RHOAI platform upgrade preserves tool-calling metadata, schema migrations apply cleanly, API responses remain consistent post-upgrade, UI filters and modelcard rendering function correctly after upgrade
 
 ### 2.3 Test Priorities
 - **P0 (Critical)** — Metadata schema can store and retrieve tool-calling fields; API returns structured JSON for validated models; ingestion pipeline successfully updates catalog entries
 - **P1 (High)** — UI displays tool-calling metadata in model cards; 'Tool Calling' filter works in left navigation; only validated models are tagged as "Tool Calling Enabled"
+- **P1 (High)** — Upgrade testing: tool-calling metadata preserved after RHOAI upgrade; schema migration completes without data loss; API and UI function correctly post-upgrade
 - **P2 (Medium)** — Copy/paste functionality from model card works correctly; error handling for missing or malformed metadata; audit mechanism for source of truth validation
 
 ---
@@ -120,7 +123,7 @@ The Model Validation team confirms a model's compatibility and specific CLI requ
 
 ## 5. Test Cases
 
-**28 test cases** have been generated across 5 categories. See the complete index at [test_cases/INDEX.md](test_cases/INDEX.md).
+**31 test cases** have been generated across 6 categories. See the complete index at [test_cases/INDEX.md](test_cases/INDEX.md).
 
 **Test Cases Directory**: [test_cases/](test_cases/)
 **Complete Test Case Index**: [test_cases/INDEX.md](test_cases/INDEX.md)
@@ -134,7 +137,8 @@ The Model Validation team confirms a model's compatibility and specific CLI requ
 | TC-PIPE (Ingestion Pipeline) | 5 | 3 P0, 2 P1, 0 P2 |
 | TC-UI (UI Components) | 7 | 0 P0, 6 P1, 1 P2 |
 | TC-VER (Versioning) | 3 | 0 P0, 2 P1, 1 P2 |
-| **Total** | **28** | **9 P0, 15 P1, 4 P2** |
+| TC-UPG (Upgrade Testing) | 3 | 0 P0, 3 P1, 0 P2 |
+| **Total** | **31** | **9 P0, 18 P1, 4 P2** |
 
 ### 5.2 Test Case Naming Convention
 
@@ -145,6 +149,7 @@ Test cases follow the naming pattern: `TC-<CATEGORY>-<NUMBER>`
 - **TC-PIPE-xxx**: Ingestion pipeline operations (upload model entry, update catalog with validated data)
 - **TC-UI-xxx**: UI components (Tool Calling filter, modelcard rendering, tag display)
 - **TC-VER-xxx**: Versioning and metadata evolution (template path changes, RHAIIS/ModelCar version updates)
+- **TC-UPG-xxx**: Upgrade testing (RHOAI platform upgrades, schema migration, post-upgrade metadata integrity)
 
 ---
 
@@ -198,7 +203,8 @@ Test cases follow the naming pattern: `TC-<CATEGORY>-<NUMBER>`
 | TC-PIPE | 5 | 3 | 2 | 0 |
 | TC-UI | 7 | 0 | 6 | 1 |
 | TC-VER | 3 | 0 | 2 | 1 |
-| **Total** | **28** | **9** | **15** | **4** |
+| TC-UPG | 3 | 0 | 3 | 0 |
+| **Total** | **31** | **9** | **18** | **4** |
 
 ### 8.2 Endpoint Coverage
 
@@ -218,6 +224,7 @@ Test cases follow the naming pattern: `TC-<CATEGORY>-<NUMBER>`
 |---------|------|---------|
 | 1 | 2026-04-08 | Initial test plan |
 | 1 | 2026-04-08 | Generated 28 test cases across 5 categories (9 P0, 15 P1, 4 P2) |
+| 1.0.2 | 2026-04-09 | Added Upgrade Testing level/type per PR #5 review; added 3 TC-UPG test cases (31 total, 9 P0, 18 P1, 4 P2) |
 
 ---
 
