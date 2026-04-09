@@ -2,8 +2,8 @@
 feature: Tool Calling Metadata Integration
 strat_key: RHAISTRAT-1262
 status: Open
-gap_count: 25
-last_updated: '2026-04-08'
+gap_count: 24
+last_updated: '2026-04-09'
 ---
 # Gaps — Tool Calling Metadata Integration
 
@@ -32,7 +32,7 @@ last_updated: '2026-04-08'
 
 - **OpenShift and RHOAI version requirements not specified** — would be resolved by: **feature refinement / design doc**
 - **Specific database type and version for Model Catalog not specified** — would be resolved by: **ADR / design doc**
-- **RBAC role definitions for Model Catalog write access not defined** — would be resolved by: **ADR / design doc**
+- ~~**RBAC role definitions for Model Catalog write access not defined**~~ — resolved: RBAC follows the same Model Registry RBAC model (per PR #5 review feedback)
 - **Specific validated tool-calling model names and versions from RHAISTRAT-1165 not provided** — would be resolved by: **feature refinement**
 - **Model Validation team API/integration specification not provided** — would be resolved by: **API spec / design doc**
 - **Chat template storage location and access patterns not specified** — would be resolved by: **ADR / design doc**

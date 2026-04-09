@@ -1,7 +1,7 @@
 ---
 feature: Tool Calling Metadata Integration
 strat_key: RHAISTRAT-1262
-version: 1.0.0
+version: 1.0.1
 status: In Review
 author: RHOAI QA Team
 additional_docs:
@@ -100,7 +100,7 @@ The Model Validation team confirms a model's compatibility and specific CLI requ
 - RHOAI UI user with access to Model Catalog browsing and filtering
 - API consumer user for Model Catalog API/BFF access
 - RHOAI Serving Wizard user for model deployment testing
-- TBD: Specific RBAC roles for Model Catalog write access
+- RBAC roles for Model Catalog write access follow the same Model Registry RBAC model
 
 ---
 
