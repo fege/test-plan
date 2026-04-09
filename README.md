@@ -10,6 +10,8 @@ Claude Code skills for generating test plans and test cases from RHOAI strategie
 |-------|-------------|
 | `/test-plan.create` | Generate a test plan from a strategy (RHAISTRAT), with optional ADR |
 | `/test-plan.create-cases` | Generate individual test case files from an existing test plan |
+| `/test-plan.publish` | Publish test plan artifacts to GitHub — branch, commit, and open a PR |
+| `/test-plan.resolve-feedback` | Assess PR review comments, let the user decide what to apply, and push updates |
 
 ### Sub-agents (forked, non-user-invocable)
 
@@ -34,6 +36,18 @@ Claude Code skills for generating test plans and test cases from RHOAI strategie
 
 # Generate test cases for a specific feature directory
 /test-plan.create-cases mcp_catalog
+
+# Publish a test plan to GitHub as a PR
+/test-plan.publish tool_calling_metadata
+
+# Publish with reviewers
+/test-plan.publish tool_calling_metadata --reviewers alice,bob
+
+# Publish to a different repo
+/test-plan.publish tool_calling_metadata --repo org/test-plans-repo
+
+# Resolve PR review feedback
+/test-plan.resolve-feedback https://github.com/org/test-plans-repo/pull/42
 ```
 
 ## Pipeline
@@ -59,12 +73,25 @@ Claude Code skills for generating test plans and test cases from RHOAI strategie
                     │
                     ▼
             TC-*.md + INDEX.md
+                    │
+                    ▼
+        /test-plan.publish
+                    │
+                    ▼
+            GitHub PR (with optional reviewers)
+                    │
+                    ▼
+        /test-plan.resolve-feedback (after PR reviews)
+                    │
+                    ▼
+            Updated artifacts + new commit on PR branch
 ```
 
 ## Prerequisites
 
 - Claude Code installed
 - Atlassian MCP server configured (for Jira strategy fetching)
+- GitHub CLI (`gh`) installed and authenticated (for publishing)
 
 ## Repository Structure
 
@@ -81,7 +108,11 @@ Claude Code skills for generating test plans and test cases from RHOAI strategie
 │   └── SKILL.md
 ├── test-plan.review/
 │   └── SKILL.md
-└── test-plan.create-cases/
-    ├── SKILL.md
-    └── test-case-template.md
+├── test-plan.create-cases/
+│   ├── SKILL.md
+│   └── test-case-template.md
+├── test-plan.publish/
+│   └── SKILL.md
+└── test-plan.resolve-feedback/
+    └── SKILL.md
 ```
