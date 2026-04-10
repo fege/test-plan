@@ -179,6 +179,9 @@ The test plan improved but still has issues. Review `<feature_dir>/TestPlanRevie
 
 {If verdict = Rework:}
 The test plan needs significant rework. This may indicate the source strategy lacks sufficient detail. Review `<feature_dir>/TestPlanReview.md` for specific issues.
+
+{If this plan is already in an open PR and reviewer comments exist:}
+Use `/test-plan.resolve-feedback <PR_URL>` to triage and apply PR feedback items.
 ```
 
 ## What This Skill Does NOT Do
@@ -187,5 +190,6 @@ The test plan needs significant rework. This may indicate the source strategy la
 - Does NOT generate test cases (use `/test-plan.create-cases`)
 - Does NOT modify the source strategy
 - Does NOT submit anything to Jira
+- Does NOT resolve GitHub PR comments (use `/test-plan.resolve-feedback <PR_URL>`)
 
 $ARGUMENTS

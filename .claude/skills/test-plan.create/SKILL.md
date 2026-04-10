@@ -197,6 +197,7 @@ The reviewer handles auto-revision internally (up to 2 cycles) and writes `<feat
 - Does NOT generate individual test case files
 - Does NOT fetch child stories under the epic
 - Does NOT fetch the Google Doc ADR — it reads a local file only
+- Does NOT resolve GitHub PR review comments (use `/test-plan.resolve-feedback <PR_URL>` after publishing)
 - Section 5 (Test Cases): left as placeholder — to be filled later in the process
 - Section 8.1 (Test Case Summary): left as placeholder — to be filled later in the process
 - Section 8.2 Test Cases and Coverage columns: left empty — to be filled later in the process
