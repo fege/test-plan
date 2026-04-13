@@ -48,15 +48,20 @@ For each section, verify it has substantive content (not just placeholders or TB
 | 3.1 Cluster Config | Are versions and dependencies specified or marked TBD? |
 | 3.2 Test Data | Are test data requirements concrete enough to act on? |
 | 4 Endpoints/Methods | Are entries grounded in source documents, not fabricated? |
-| 6 Risks | Are risks specific to this feature, not boilerplate? |
-| 7 Environment | Is there enough detail to set up a test environment? |
+| 7.1 Disconnected | Addressed with testing considerations or explicitly marked Not Applicable with justification? |
+| 7.2 Upgrade | Addressed with testing considerations or explicitly marked Not Applicable with justification? |
+| 7.3 Performance | Addressed with testing considerations or explicitly marked Not Applicable with justification? |
+| 7.4 RBAC | Addressed with testing considerations or explicitly marked Not Applicable with justification? |
+| 8 Risks | Are risks specific to this feature, not boilerplate? |
+| 9 Environment | Is there enough detail to set up a test environment? |
 
 ### 3. Consistency Check
 
 - Do the endpoints in Section 4 align with the scope in Section 1.2?
 - Do the test levels in Section 2.1 match the interface types in Section 4?
 - Are priority assignments in Section 4 consistent with the definitions in Section 2.3?
-- Does Section 8.2 list all endpoints from Section 4?
+- Does Section 10.2 list all endpoints from Section 4?
+- Are NFR categories in Section 7 consistent with the feature scope? (e.g., a feature that pulls images should not mark Disconnected as N/A)
 
 ## Output Format
 
