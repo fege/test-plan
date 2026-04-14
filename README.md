@@ -143,7 +143,7 @@ uv run pytest tests/ -v
 
 Run a specific test file:
 ```bash
-uv run pytest tests/test_core_schemas.py -v
+uv run pytest tests/test_schema_validation.py -v
 ```
 
 Run tests with coverage:
@@ -153,16 +153,17 @@ uv run pytest tests/ -v --cov=scripts --cov-report=term-missing
 
 Run a specific test:
 ```bash
-uv run pytest tests/test_core_schemas.py::TestPlanSchemaValidation::test_strat_key_validation -v
+uv run pytest tests/test_schema_validation.py::TestPlanSchemaValidation::test_field_validation -v
 ```
 
 ### Test Structure
 
 ```
 tests/
-├── constants.py                   # Shared test data constants
-├── test_core_schemas.py           # Core schema validation tests
-├── test_artifact_utils_validation.py  # Review schema validation tests
-├── test_filter_for_revision.py    # Revision filter logic tests
-└── test_preserve_review_state.py  # State persistence tests
+├── constants.py                      # Shared test data constants
+├── test_schema_validation.py         # Schema validation tests (test-plan, test-case, test-gaps)
+├── test_frontmatter_operations.py    # Frontmatter operations (read, write, update, detect)
+├── test_artifact_utils_validation.py # Review schema validation tests
+├── test_filter_for_revision.py       # Revision filter logic tests
+└── test_preserve_review_state.py     # State persistence tests
 ```

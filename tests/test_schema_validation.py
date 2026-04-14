@@ -1,14 +1,52 @@
 """
-Core schema validation tests for test-plan artifacts.
+Schema validation tests for test-plan artifacts.
 
-Tests the foundational schemas (test-plan, test-case, test-gaps) and
-core frontmatter operations (read, write, update, validate).
+Tests that frontmatter data validates correctly against schema rules
+for test-plan, test-case, and test-gaps artifact types. Also tests
+schema type detection from filenames.
 """
 
 import pytest
 
-from scripts.artifact_utils import validate, apply_defaults, detect_schema_type
+from scripts.artifact_utils import validate, apply_defaults, detect_schema_type, get_schema_yaml
 from tests.constants import VALID_TEST_PLAN_DATA, VALID_TEST_CASE_DATA, VALID_TEST_GAPS_DATA
+
+
+class TestSchemaDetection:
+    """Test schema type detection from filenames."""
+
+    @pytest.mark.parametrize("filename,expected_schema", [
+        ("TestPlan.md", "test-plan"),
+        ("tool_calling/TestPlan.md", "test-plan"),
+        ("TC-API-001.md", "test-case"),
+        ("test_cases/TC-UI-042.md", "test-case"),
+        ("TestPlanGaps.md", "test-gaps"),
+        ("feature/TestPlanGaps.md", "test-gaps"),
+    ])
+    def test_detect_schema_type(self, filename, expected_schema):
+        """Test that schema type is correctly detected from filename."""
+        result = detect_schema_type(filename)
+        assert result == expected_schema, f"Expected {filename} to detect as {expected_schema}, got {result}"
+
+    @pytest.mark.parametrize("schema_type", [
+        "test-plan",
+        "test-case",
+        "test-gaps",
+        "test-plan-review",
+    ])
+    def test_get_schema_yaml(self, schema_type):
+        """Test that get_schema_yaml returns valid YAML for each schema type."""
+        result = get_schema_yaml(schema_type)
+
+        # Should return YAML string
+        assert isinstance(result, str)
+        assert len(result) > 0
+
+        # Should have required and optional sections
+        assert "required:" in result
+
+        # Should contain schema-specific fields
+        assert "strat_key:" in result  # All schemas have this
 
 
 class TestPlanSchemaValidation:
@@ -131,20 +169,3 @@ class TestGapsSchemaValidation:
         else:
             assert any(field_name in err for err in errors), \
                 f"Expected {field_name}={field_value} to fail with {field_name} error, got: {errors}"
-
-
-class TestSchemaDetection:
-    """Test schema type detection from filenames."""
-
-    @pytest.mark.parametrize("filename,expected_schema", [
-        ("TestPlan.md", "test-plan"),
-        ("tool_calling/TestPlan.md", "test-plan"),
-        ("TC-API-001.md", "test-case"),
-        ("test_cases/TC-UI-042.md", "test-case"),
-        ("TestPlanGaps.md", "test-gaps"),
-        ("feature/TestPlanGaps.md", "test-gaps"),
-    ])
-    def test_detect_schema_type(self, filename, expected_schema):
-        """Test that schema type is correctly detected from filename."""
-        result = detect_schema_type(filename)
-        assert result == expected_schema, f"Expected {filename} to detect as {expected_schema}, got {result}"
