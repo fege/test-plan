@@ -160,5 +160,9 @@ uv run pytest tests/test_core_schemas.py::TestPlanSchemaValidation::test_strat_k
 
 ```
 tests/
-└── test_core_schemas.py           # Core schema validation tests (in progress)
+├── constants.py                   # Shared test data constants
+├── test_core_schemas.py           # Core schema validation tests
+├── test_artifact_utils_validation.py  # Review schema validation tests
+├── test_filter_for_revision.py    # Revision filter logic tests
+└── test_preserve_review_state.py  # State persistence tests
 ```
