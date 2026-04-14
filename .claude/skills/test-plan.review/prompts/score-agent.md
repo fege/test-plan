@@ -60,7 +60,7 @@ Strategy text (inline): {STRATEGY_TEXT}
 
 **Smell test:** Hand Sections 3 and 7 to a platform engineer who knows nothing about the feature. Could they provision the environment? If they'd come back with questions, it's not actionable.
 
-### 5. INTERNAL CONSISTENCY — Do sections agree with each other?
+### 5. CONSISTENCY — Do sections agree with each other?
 
 | Score | Definition |
 |-------|------------|

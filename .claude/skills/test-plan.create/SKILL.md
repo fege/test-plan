@@ -182,7 +182,7 @@ The reviewer runs the quality rubric (5 criteria, 0-2 each, 10-point scale):
 - **Grounding** — traceable to source material vs fabricated
 - **Scope Fidelity** — matches strategy scope
 - **Actionability** — a QE engineer could start testing
-- **Internal Consistency** — sections agree with each other
+- **Consistency** — sections agree with each other
 
 The reviewer handles auto-revision internally (up to 2 cycles) and writes `<feature_name>/TestPlanReview.md` with scores and feedback.
 

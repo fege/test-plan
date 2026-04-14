@@ -13,7 +13,7 @@ allowedTools:
 
 # Test Plan Scorer
 
-Score an existing test plan using the 5-criteria quality rubric (Specificity, Grounding, Scope Fidelity, Actionability, Internal Consistency). This is the user-facing entrypoint for rubric evaluation.
+Score an existing test plan using the 5-criteria quality rubric (Specificity, Grounding, Scope Fidelity, Actionability, Consistency). This is the user-facing entrypoint for rubric evaluation.
 
 ## Usage
 
@@ -44,7 +44,7 @@ Parse `$ARGUMENTS` to extract:
    ```
    mcp__atlassian__getJiraIssue with issueIdOrKey=<strat_key>
    ```
-   If MCP is unavailable, check for a local strategy file in `artifacts/strat-tasks/<strat_key>.md`. If neither is available, warn the user and proceed — grounding and scope fidelity will be scored based on internal consistency only.
+   If MCP is unavailable, check for a local strategy file in `artifacts/strat-tasks/<strat_key>.md`. If neither is available, warn the user and proceed — grounding and scope fidelity will be scored based on plan consistency only.
 
 ### Step 2: Score (fork)
 
