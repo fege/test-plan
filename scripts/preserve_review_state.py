@@ -31,6 +31,11 @@ def _extract_revision_history(filepath):
     with open(filepath) as f:
         content = f.read()
 
+    return _extract_revision_history_from_content(content)
+
+
+def _extract_revision_history_from_content(content):
+    """Extract the ## Revision History section content from file content."""
     if content.startswith("---"):
         end = content.find("---", 3)
         if end != -1:
@@ -48,6 +53,28 @@ def _extract_revision_history(filepath):
         section = section[:next_heading.start()]
 
     return section.strip()
+
+
+def _is_placeholder_history(text):
+    """Return true when revision history body is placeholder text."""
+    normalized = text.strip().lower()
+    return normalized in {"", "initial assessment", "none", "n/a"}
+
+
+def _replace_revision_history(content, new_history):
+    """Replace body of ## Revision History section with new history text."""
+    pattern = re.compile(
+        r"(^## Revision History\s*\n)(.*?)(?=^## |\Z)",
+        re.MULTILINE | re.DOTALL,
+    )
+    replacement_body = new_history.strip()
+
+    def repl(match):
+        if replacement_body:
+            return match.group(1) + replacement_body + "\n\n"
+        return match.group(1)
+
+    return pattern.sub(repl, content, count=1)
 
 
 def save(feature_dir):
@@ -99,15 +126,17 @@ def restore(feature_dir):
         with open(rpath) as f:
             content = f.read()
 
-        marker = "## Revision History"
-        idx = content.find(marker)
-        if idx != -1:
-            after_marker = idx + len(marker)
-            current_after = content[after_marker:]
-            content = (content[:after_marker] + "\n" +
-                       saved_history + "\n" + current_after.lstrip("\n"))
-            with open(rpath, "w") as f:
-                f.write(content)
+        current_history = _extract_revision_history_from_content(content)
+        if _is_placeholder_history(current_history):
+            merged_history = saved_history
+        elif current_history.startswith(saved_history):
+            merged_history = current_history
+        else:
+            merged_history = f"{saved_history}\n\n{current_history}"
+
+        content = _replace_revision_history(content, merged_history)
+        with open(rpath, "w") as f:
+            f.write(content)
 
     os.remove(spath)
     print(f"RESTORED state for {feature_dir}")
