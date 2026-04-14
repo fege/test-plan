@@ -2,7 +2,7 @@
 """Determine whether a test plan review warrants revision.
 
 Reads TestPlanReview.md frontmatter and decides if the revise agent should run.
-Rejects score regressions by setting verdict=Rework.
+Rejects score regressions by recording regression metadata in `error`.
 
 Usage:
     python3 scripts/filter_for_revision.py <feature_dir>
@@ -47,10 +47,10 @@ def main():
 
     if before_score is not None and score < before_score:
         update_frontmatter(review_path,
-                           {"verdict": "Rework"},
+                           {"error": f"score_regression:{before_score}->{score}"},
                            "test-plan-review")
         print(f"Score regressed ({before_score} -> {score}), "
-              f"setting verdict=Rework", file=sys.stderr)
+              f"recording score_regression in error", file=sys.stderr)
         print("SKIP")
         return
 

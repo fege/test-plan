@@ -98,7 +98,7 @@ class TestFilterForRevision(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout.strip(), "SKIP")
 
-    def test_score_regression_sets_rework_and_skips(self):
+    def test_score_regression_records_error_and_skips(self):
         _write_review(
             self.tempdir,
             {
@@ -133,7 +133,8 @@ class TestFilterForRevision(unittest.TestCase):
 
         review_path = os.path.join(self.tempdir, "TestPlanReview.md")
         data, _ = read_frontmatter_validated(review_path, "test-plan-review")
-        self.assertEqual(data["verdict"], "Rework")
+        self.assertEqual(data["verdict"], "Revise")
+        self.assertEqual(data["error"], "score_regression:8->7")
 
 
 if __name__ == "__main__":

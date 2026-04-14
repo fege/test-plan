@@ -35,6 +35,11 @@ def _valid_review_data():
 
 
 class TestReviewSchemaValidation(unittest.TestCase):
+    def test_valid_review_data_passes_validation(self):
+        data = _valid_review_data()
+        errors = validate(data, "test-plan-review")
+        self.assertEqual(errors, [])
+
     def test_criterion_score_must_be_in_range(self):
         data = _valid_review_data()
         data["scores"]["specificity"] = 3

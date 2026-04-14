@@ -1,7 +1,7 @@
 ---
 name: test-plan.review
 description: Reviews a generated test plan for completeness, consistency, and quality using a 5-criteria rubric. Scores, auto-revises, and re-scores (max 2 cycles).
-user-invocable: true
+user-invocable: false
 model: opus
 allowedTools:
   - Read
@@ -14,19 +14,13 @@ allowedTools:
 
 # Test Plan Reviewer
 
-Review and score a test plan using the quality rubric (5 criteria, 0-2 each, 10-point scale). Auto-revises failing plans and re-scores up to 2 times.
+Internal orchestrator that reviews and scores a test plan using the quality rubric (5 criteria, 0-2 each, 10-point scale). Auto-revises failing plans and re-scores up to 2 times.
 
 ## Usage
 
-```
-/test-plan.review <feature_dir>
-```
-
-Examples:
-- `/test-plan.review kagenti_agent_templates`
-- `/test-plan.review mcp_catalog`
-
-When called from `test-plan.create` (Step 4), the feature directory is passed automatically.
+This skill is not user-invocable. It is called by:
+- `test-plan.create` (Step 4)
+- automation/orchestrator flows that need score + auto-revision behavior
 
 ## Inputs
 

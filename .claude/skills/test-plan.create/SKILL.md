@@ -171,7 +171,7 @@ After generating the test plan, collect all gaps reported by the three sub-agent
 
 ### Step 4: Review, Score, and Improve
 
-After the gaps flow is complete, invoke the **`test-plan.review`** skill with the feature directory:
+After the gaps flow is complete, invoke the internal **`test-plan.review`** skill with the feature directory:
 
 ```
 /test-plan.review <feature_name>

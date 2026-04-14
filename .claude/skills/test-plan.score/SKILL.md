@@ -13,7 +13,7 @@ allowedTools:
 
 # Test Plan Scorer
 
-Score an existing test plan using the 5-criteria quality rubric (Specificity, Grounding, Scope Fidelity, Actionability, Internal Consistency). Unlike `/test-plan.review`, this skill does NOT trigger auto-revision — it only scores and reports.
+Score an existing test plan using the 5-criteria quality rubric (Specificity, Grounding, Scope Fidelity, Actionability, Internal Consistency). This is the user-facing entrypoint for rubric evaluation.
 
 ## Usage
 
@@ -77,8 +77,8 @@ Parse the score agent's output and present the results directly to the user:
 ### Verdict
 
 {If >= 8, no zeros: "**Ready** — proceed to test case generation"}
-{If = 7, no zeros: "**Revise** — minor improvements needed. Run `/test-plan.review <feature_dir>` to auto-revise."}
-{If < 7 or any zero: "**Rework** — significant issues. Run `/test-plan.review <feature_dir>` to attempt auto-revision, or provide better source material."}
+{If = 7, no zeros: "**Revise** — minor improvements needed. Re-run via `/test-plan.create` flow to apply auto-revision, or invoke the internal `test-plan.review` workflow from automation."}
+{If < 7 or any zero: "**Rework** — significant issues. Re-run via `/test-plan.create` flow for remediation, or use automation that calls internal `test-plan.review`."}
 
 ### Grounding Cross-Reference
 {Include the full grounding cross-reference table from the scorer}
@@ -89,6 +89,6 @@ Parse the score agent's output and present the results directly to the user:
 - Does NOT write a TestPlanReview.md file
 - Does NOT trigger auto-revision
 - Does NOT modify the test plan
-- For scoring + auto-revision, use `/test-plan.review` instead
+- For scoring + auto-revision, use `/test-plan.create` flow (which calls internal `test-plan.review`)
 
 $ARGUMENTS
