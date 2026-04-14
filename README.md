@@ -117,3 +117,48 @@ Claude Code skills for generating test plans and test cases from RHOAI strategie
 └── test-plan.resolve-feedback/
     └── SKILL.md
 ```
+
+## Development
+
+### Prerequisites
+
+Install the package in development mode (includes all dependencies):
+
+```bash
+uv pip install -e .
+```
+
+This installs:
+- The `test-plan` package in editable mode (changes are immediately available)
+- `pyyaml` - YAML frontmatter parsing
+- `pytest` - Test framework
+- `pytest-cov` - Coverage reporting
+
+### Running Tests
+
+Run all tests:
+```bash
+uv run pytest tests/ -v
+```
+
+Run a specific test file:
+```bash
+uv run pytest tests/test_core_schemas.py -v
+```
+
+Run tests with coverage:
+```bash
+uv run pytest tests/ -v --cov=scripts --cov-report=term-missing
+```
+
+Run a specific test:
+```bash
+uv run pytest tests/test_core_schemas.py::TestPlanSchemaValidation::test_strat_key_validation -v
+```
+
+### Test Structure
+
+```
+tests/
+└── test_core_schemas.py           # Core schema validation tests (in progress)
+```
