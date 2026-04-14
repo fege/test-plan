@@ -171,11 +171,7 @@ After generating the test plan, collect all gaps reported by the three sub-agent
 
 ### Step 4: Review, Score, and Improve
 
-After the gaps flow is complete, invoke the internal **`test-plan.review`** skill with the feature directory:
-
-```
-/test-plan.review <feature_name>
-```
+After the gaps flow is complete, invoke the internal **`test-plan.review`** skill with the feature directory.
 
 The reviewer runs the quality rubric (5 criteria, 0-2 each, 10-point scale):
 - **Specificity** — feature-specific vs boilerplate

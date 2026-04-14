@@ -56,6 +56,7 @@ Launch a **forked** score agent with these substitutions:
 - `{FEATURE_DIR}` = feature directory path
 - `{TEST_PLAN_PATH}` = `<feature_dir>/TestPlan.md`
 - `{STRATEGY_TEXT}` = raw strategy description text from Step 1
+- `{CALIBRATION_DIR}` = `${CLAUDE_SKILL_DIR}/calibration/`
 
 The score agent returns a structured rubric assessment with per-criterion scores and a grounding cross-reference table.
 

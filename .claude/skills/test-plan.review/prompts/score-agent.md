@@ -111,6 +111,6 @@ Be rigorous. When in doubt between two scores, choose the lower one and explain 
 
 ## Calibration Reference
 
-Before scoring, read the calibration examples in `${CLAUDE_SKILL_DIR}/calibration/` for score anchoring. These show how the rubric has been applied to real test plans with documented rationale. Use them to calibrate your scoring — particularly for borderline cases on Specificity (swap test) and Actionability (5-question threshold).
+Before scoring, read the calibration examples in `{CALIBRATION_DIR}` for score anchoring. These show how the rubric has been applied to real test plans with documented rationale. Use them to calibrate your scoring — particularly for borderline cases on Specificity (swap test) and Actionability (5-question threshold).
 
 Do not return a summary. Your work is complete when the assessment output above is produced.
