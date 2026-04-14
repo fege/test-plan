@@ -122,10 +122,11 @@ Claude Code skills for generating test plans and test cases from RHOAI strategie
 
 ### Prerequisites
 
-Install the package in development mode (includes all dependencies):
+Install the package in development mode with dev dependencies:
 
 ```bash
 uv pip install -e .
+uv pip install pytest pytest-cov
 ```
 
 This installs:
