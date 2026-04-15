@@ -125,8 +125,7 @@ Claude Code skills for generating test plans and test cases from RHOAI strategie
 Install the package in development mode with dev dependencies:
 
 ```bash
-uv pip install -e .
-uv pip install pytest pytest-cov
+uv pip install -e ".[dev]"
 ```
 
 This installs:
@@ -162,9 +161,12 @@ uv run pytest tests/test_schema_validation.py::TestPlanSchemaValidation::test_fi
 ```
 tests/
 ├── constants.py                      # Shared test data constants
-├── test_schema_validation.py         # Schema validation tests (test-plan, test-case, test-gaps)
-├── test_frontmatter_operations.py    # Frontmatter operations (read, write, update, detect)
-├── test_artifact_utils_validation.py # Review schema validation tests
-├── test_filter_for_revision.py       # Revision filter logic tests
-└── test_preserve_review_state.py     # State persistence tests
+├── unit/                             # Unit tests (fast, isolated)
+│   ├── test_schema_validation.py     # Schema validation (test-plan, test-case, test-gaps)
+│   ├── test_frontmatter_operations.py # Read, write, update operations
+│   └── test_frontmatter_cli_unit.py  # CLI interface tests
+└── integration/                      # Integration tests (subprocess, file I/O)
+    ├── test_artifact_utils_validation.py # Review schema validation
+    ├── test_filter_for_revision.py   # Revision filter (subprocess)
+    └── test_preserve_review_state.py # State persistence
 ```

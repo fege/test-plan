@@ -28,7 +28,7 @@ def test_schema_command_output():
         output = sys.stdout.getvalue()
 
         # Should print YAML schema
-        assert 'required:' in output or len(output) > 0
+        assert 'required:' in output
 
     finally:
         sys.argv = old_argv
