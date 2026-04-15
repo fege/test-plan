@@ -114,8 +114,9 @@ If the user declines, stop.
 
 ### Step 4: Create Branch and Commit
 
-1. Create and switch to the new branch from `main`:
+1. Fetch latest changes and create branch from `main`:
    ```bash
+   git fetch origin main
    git checkout -b test-plan/<strat_key>-v<version> main
    ```
    If the branch already exists, inform the user and ask whether to:
@@ -125,6 +126,7 @@ If the user declines, stop.
 
    If the user chooses **overwrite**, delete and recreate the branch from `main`:
    ```bash
+   git fetch origin main
    git branch -D test-plan/<strat_key>-v<version>
    git checkout -b test-plan/<strat_key>-v<version> main
    ```

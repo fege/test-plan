@@ -72,6 +72,8 @@ The score agent evaluates the test plan against a 5-criterion rubric (specificit
 | 3.1 Cluster Config | Are versions and dependencies specified or marked TBD? |
 | 3.2 Test Data | Are test data requirements concrete enough to act on? |
 | 4 Endpoints/Methods | Are entries grounded in source documents, not fabricated? |
+| 6.1 E2E Scenarios | Is the E2E Scenario Summary populated with TC-E2E-* entries? (Note: expected to be empty until create-cases runs) |
+| 6.2 E2E Coverage | Does each P0 endpoint from Section 4 have E2E scenario coverage in Section 6.2? (Note: expected to be empty until create-cases runs) |
 | 7.1 Disconnected | Addressed with testing considerations or explicitly marked Not Applicable with justification? |
 | 7.2 Upgrade | Addressed with testing considerations or explicitly marked Not Applicable with justification? |
 | 7.3 Performance | Addressed with testing considerations or explicitly marked Not Applicable with justification? |
@@ -96,6 +98,7 @@ The review agent writes `<feature_dir>/TestPlanReview.md` with rubric scores, fe
 - Are priority assignments in Section 4 consistent with the definitions in Section 2.3?
 - Does Section 10.2 list all endpoints from Section 4?
 - Are NFR categories in Section 7 consistent with the feature scope? (e.g., a feature that pulls images should not mark Disconnected as N/A)
+- Does Section 6.2 E2E Coverage Matrix include all P0 endpoints from Section 4? (Note: expected to be empty until create-cases runs)
 
 ### Step 4: Check Criteria and Revise (max 2 cycles)
 

@@ -64,9 +64,9 @@ Strategy text (inline): {STRATEGY_TEXT}
 
 | Score | Definition |
 |-------|------------|
-| **0** | Contradictions — endpoints in Section 4 not covered by scope in Section 1.2, priority assignments conflict with definitions, test levels don't match interface types. |
-| **1** | Minor inconsistencies — Section 10.2 missing an endpoint from Section 4, or a test level in 2.1 with no corresponding entries in Section 4. |
-| **2** | All cross-references align: scope -> objectives -> endpoints -> coverage table. Priority assignments match definitions. Test levels correspond to actual interface types under test. |
+| **0** | Contradictions — endpoints in Section 4 not covered by scope in Section 1.2, priority assignments conflict with definitions, test levels don't match interface types, NFR categories marked N/A despite feature scope requiring them. |
+| **1** | Minor inconsistencies — Section 10.2 missing an endpoint from Section 4, a test level in 2.1 with no corresponding entries in Section 4, Section 6.2 missing a P0 endpoint (post-create-cases only). |
+| **2** | All cross-references align: scope -> objectives -> endpoints -> coverage tables (both Section 6.2 E2E and Section 10.2 API). Priority assignments match definitions. Test levels correspond to actual interface types under test. NFR categories align with feature scope. Section 6 placeholder present pre-create-cases. |
 
 **Cross-checks (perform all):**
 - Section 4 endpoints are a subset of Section 1.2 scope
@@ -74,6 +74,7 @@ Strategy text (inline): {STRATEGY_TEXT}
 - Priority assignments in Section 4 match Section 2.3 definitions
 - Section 10.2 lists every endpoint from Section 4
 - Section 7 NFR categories are consistent with the feature scope (e.g., a feature that pulls images should not mark Disconnected as N/A; each category must be addressed or marked Not Applicable with justification)
+- Section 6.2 E2E Coverage Matrix includes all P0 endpoints from Section 4 (Note: **Pre-create-cases** = acceptable if placeholder text is present; **Post-create-cases** = must have actual coverage for all P0 endpoints. Check if test cases exist to determine which state applies)
 
 ## Output Format
 
@@ -107,6 +108,7 @@ Return your assessment in this exact structure:
 - Section 4 priorities vs Section 2.3 definitions: {result}
 - Section 10.2 vs Section 4 endpoints: {result}
 - Section 7 NFR categories vs feature scope: {result}
+- Section 6.2 E2E coverage vs Section 4 P0 endpoints: {result}
 ```
 
 Be rigorous. When in doubt between two scores, choose the lower one and explain why.

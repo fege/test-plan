@@ -2,6 +2,7 @@
 
 **Source**: `kagenti_agent_templates_1/TestPlan.md` (RHAISTRAT-1290)
 **Test plan version**: Without test cases (Sections 5/10 unpopulated), no YAML frontmatter
+**Note**: This example predates Section 6 (E2E Scenarios) and Section 7 (NFR Assessment). It demonstrates the original four-cross-check consistency model. Modern test plans should evaluate six cross-checks (adding NFR and E2E coverage).
 
 ## Score Table
 
