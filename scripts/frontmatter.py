@@ -42,14 +42,16 @@ import os
 import sys
 from datetime import date
 
-from scripts.artifact_utils import (
+from scripts.utils.schemas import (
     SCHEMAS,
+    ValidationError,
     detect_schema_type,
     get_schema_yaml,
+)
+from scripts.utils.frontmatter_utils import (
     read_frontmatter_validated,
-    write_frontmatter,
     update_frontmatter,
-    ValidationError,
+    write_frontmatter,
 )
 
 

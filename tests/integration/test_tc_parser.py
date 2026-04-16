@@ -6,8 +6,8 @@ Tests parse_tc_file with real read_frontmatter function and actual TC files.
 
 import pytest
 
-from scripts.artifact_utils import read_frontmatter
-from scripts.tc_parser import parse_tc_file
+from scripts.utils.frontmatter_utils import read_frontmatter
+from scripts.utils.tc_parser import parse_tc_file
 from tests.integration.constants import (
     VALID_COMPLETE_TC,
     TC_WITH_MULTILINE_ITEMS,

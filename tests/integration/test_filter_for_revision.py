@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.artifact_utils import read_frontmatter_validated, write_frontmatter
+from scripts.utils.frontmatter_utils import read_frontmatter_validated, write_frontmatter
 
 
 FILTER_SCRIPT = str(Path(__file__).parent.parent.parent / "scripts" / "filter_for_revision.py")

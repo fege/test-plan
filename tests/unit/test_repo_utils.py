@@ -7,7 +7,7 @@ Only tests real logic - no trivial dict lookups or library behavior.
 
 import json
 
-from scripts.repo_utils import (
+from scripts.utils.repo_utils import (
     extract_conventions_from_context,
     get_framework,
     load_repo_test_context,
