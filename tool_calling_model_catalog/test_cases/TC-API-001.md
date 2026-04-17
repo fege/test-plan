@@ -3,8 +3,12 @@ test_case_id: TC-API-001
 strat_key: RHAISTRAT-1262
 priority: P0
 status: Draft
-automation_status: Not Started
+automation_status: Implemented
 last_updated: '2026-04-13'
+automation_file: tests/model_registry/model_catalog/metadata/test_tool_calling_metadata.py
+automation_function: TestToolCallingMetadata::test_tool_calling_metadata_fields_present
+automated_by: claude-test-plan.case-implement
+automated_date: '2026-04-17'
 ---
 # TC-API-001: Retrieve tool-calling metadata for a validated model via BFF API
 
