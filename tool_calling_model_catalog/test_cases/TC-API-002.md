@@ -2,9 +2,9 @@
 test_case_id: TC-API-002
 strat_key: RHAISTRAT-1262
 priority: P0
-status: Draft
-automation_status: Not Started
-last_updated: '2026-04-13'
+status: Automated
+automation_status: Complete
+last_updated: '2026-04-17'
 ---
 # TC-API-002: Verify JSON response structure includes all required tool-calling fields
 

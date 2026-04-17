@@ -2,9 +2,9 @@
 test_case_id: TC-API-004
 strat_key: RHAISTRAT-1262
 priority: P1
-status: Draft
-automation_status: Not Started
-last_updated: '2026-04-13'
+status: Automated
+automation_status: Complete
+last_updated: '2026-04-17'
 ---
 # TC-API-004: Retrieve metadata for model without tool-calling support
 
