@@ -8,7 +8,7 @@ schema type detection from filenames.
 
 import pytest
 
-from scripts.artifact_utils import validate, apply_defaults, detect_schema_type, get_schema_yaml
+from scripts.utils.schemas import validate, apply_defaults, detect_schema_type, get_schema_yaml
 from tests.constants import VALID_TEST_PLAN_DATA, VALID_TEST_CASE_DATA, VALID_TEST_GAPS_DATA
 
 
