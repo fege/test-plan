@@ -1,10 +1,13 @@
-# Example of LOW QUALITY test (should score 3-4/10)
+# SCORER CALIBRATION: LOW QUALITY test (should score 3-4/10)
 #
-# Coverage: 1/2 - Missing some expected results, has TODOs for specified requirements
-# Assertions: 0/2 - Generic assertions, no messages
-# Conventions: 1/2 - Uses invented marker not in repo's pytest.ini
-# Test Data: 0/2 - Uses placeholder "test-model" instead of exact ID from TC
-# Code Quality: 0/2 - Excessive TODOs, fabricated helper, missing error checks
+# Issues demonstrated (compare with good-pytest-test.py for correct version):
+# ❌ Coverage: 1/2 - Missing some expected results, has TODOs for specified requirements
+# ❌ Assertions: 0/2 - Generic assertions, no messages
+# ❌ Conventions: 1/2 - Uses invented marker not in repo's pytest.ini
+# ❌ Test Data: 0/2 - Uses placeholder "test-model" instead of exact ID from TC
+# ❌ Code Quality: 0/2 - Excessive TODOs for things specified in TC, fabricated helper
+#
+# Tiger Team has no pytest rules yet - this calibration is standalone.
 
 import pytest
 

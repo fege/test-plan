@@ -827,14 +827,27 @@ If syntax is INVALID:
 
 For each generated test file (with valid syntax):
 
-1. **Invoke forked sub-agent `test-plan.score.test-function`** for quality assessment:
-   ```
-   test-plan.score.test-function --test-code-file <temp_test_file> --tc-file <tc_file> --conventions-file <conventions_file> --framework <framework>
+1. **Set up score output directory**:
+   ```bash
+   mkdir -p <feature_dir>/test_scores
    ```
 
-2. **Sub-agent returns**: Score (0-10), verdict (Ready/Good/Revise/Rework), issues found
+2. **Invoke forked sub-agent `test-plan.score.test-function`** for quality assessment:
+   ```
+   test-plan.score.test-function \
+     --test-code-file <temp_test_file> \
+     --tc-file <tc_file> \
+     --conventions-file <conventions_file> \
+     --framework <framework> \
+     --output-file <feature_dir>/test_scores/<tc_id>_score.md
+   ```
 
-3. **Handle verdict**:
+3. **Read score assessment** from `<feature_dir>/test_scores/<tc_id>_score.md`:
+   - Extract verdict from `**Verdict**: {verdict}` line
+   - Extract total score from `**Total Score**: {score}/10` line
+   - Extract issues from `### Issues Found` section (everything after that heading until next `###`)
+
+4. **Handle verdict**:
 
    **If verdict == "Ready" or "Good"** (score 7-10):
    - Add to `files_to_write`
@@ -842,18 +855,34 @@ For each generated test file (with valid syntax):
 
    **If verdict == "Revise"** (score 4-6):
    - Log: "⚠ Test quality score: {score}/10 - auto-revising"
+   - Extract issues from score file (read `### Issues Found` section and `### Revision Needed` section)
    - Re-invoke `test-plan.create.test-function` sub-agent with same args (tc_file, conventions, pattern_guide, repo_instructions_file, etc.) plus feedback:
      ```
-     Additional instructions: {issues from scorer}
+     Additional instructions based on quality assessment:
+
+     {paste full "### Issues Found" section from score file}
+
+     {paste "Specific improvements needed" from "### Revision Needed" section}
      ```
-   - Re-score the revised code
-   - If revised score >= 7: Accept
+   - Save revised code to temp file
+   - Re-invoke scorer with `--output-file <feature_dir>/test_scores/<tc_id>_score_revised.md`
+   - Read revised score file to get new verdict and score
+   - If revised score >= 7: Accept revised code
    - If revised score still < 7: Accept anyway (attempted revision), log warning
 
    **If verdict == "Rework"** (score 0-3):
    - Log: "❌ Test quality score: {score}/10 - significant issues"
-   - Save as draft for manual review
-   - Show issues to user
+   - Extract issues from score file (read `### Issues Found` section)
+   - Save test code as draft: `<test_file_path>.draft`
+   - Save score assessment: `<feature_dir>/test_scores/<tc_id>_score.md` (already written by scorer)
+   - Show issues to user:
+     ```
+     Test {tc_id} requires manual review (score {score}/10):
+     {paste issues from score file}
+
+     Draft saved to: {test_file_path}.draft
+     Score details: {score_file_path}
+     ```
 
 4. **Present quality report** to user after all tests scored:
    ```

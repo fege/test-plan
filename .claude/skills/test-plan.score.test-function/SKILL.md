@@ -2,7 +2,7 @@
 name: test-plan.score.test-function
 description: Score generated test function code for completeness, quality, and convention adherence using a 5-criteria rubric
 context: fork
-allowed-tools: Read
+allowed-tools: Read, Write
 model: opus
 user-invocable: false
 ---
@@ -24,6 +24,7 @@ Parse `$ARGUMENTS` to extract:
 2. **`--tc-file`**: Path to TC-*.md specification
 3. **`--conventions-file`**: Path to repository conventions markdown
 4. **`--framework`**: Test framework (pytest, Go testing, Jest, etc.)
+5. **`--output-file`**: Path where assessment should be written (for revision feedback)
 
 ## Process
 
@@ -38,6 +39,7 @@ Apply the prompt with substitutions:
 - `{TC_FILE}` = `--tc-file` argument
 - `{CONVENTIONS_FILE}` = `--conventions-file` argument
 - `{FRAMEWORK}` = `--framework` argument
+- `{OUTPUT_FILE}` = `--output-file` argument
 
 The scoring rubric evaluates:
 1. **Coverage** (0-2): All TC requirements implemented?
@@ -46,9 +48,9 @@ The scoring rubric evaluates:
 4. **Test Data** (0-2): Uses realistic values from TC?
 5. **Code Quality** (0-2): Clean, no excessive TODOs?
 
-### Step 3: Return Assessment
+### Step 3: Write Assessment to File
 
-Return the structured markdown assessment from the scorer.
+Write the structured markdown assessment to the `--output-file` path.
 
 The output includes:
 - Per-criterion scores with issues
@@ -58,11 +60,16 @@ The output includes:
 - Specific issues found
 - Revision recommendations (if needed)
 
+**IMPORTANT**: The orchestrating skill needs this file to:
+1. Extract the verdict to decide if revision is needed
+2. Extract specific issues to pass as feedback to the test generator
+3. Keep an audit trail of quality assessments
+
 ## What This Skill Does NOT Do
 
-- Does NOT write score to a file
-- Does NOT modify the generated test code
+- Does NOT modify the generated test code (only assesses it)
 - Does NOT trigger auto-revision (that's handled by the orchestrating skill)
+- Does NOT make the revision decision (returns verdict, orchestrating skill decides)
 - For scoring + auto-revision, the orchestrating skill (`test-plan.case-implement`) handles the revision loop
 
 $ARGUMENTS
