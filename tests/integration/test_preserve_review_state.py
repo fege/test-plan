@@ -4,7 +4,7 @@ import shutil
 import tempfile
 import unittest
 
-from scripts.artifact_utils import read_frontmatter_validated, write_frontmatter
+from scripts.utils.frontmatter_utils import read_frontmatter_validated, write_frontmatter
 from scripts import preserve_review_state
 
 

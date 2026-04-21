@@ -17,8 +17,7 @@ Exit code 0 in all cases; check stdout for the decision.
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from artifact_utils import read_frontmatter_validated, update_frontmatter
+from scripts.utils.frontmatter_utils import read_frontmatter_validated, update_frontmatter
 
 
 def main():

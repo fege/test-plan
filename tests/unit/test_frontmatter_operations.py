@@ -7,7 +7,7 @@ Tests read, write, update, and schema detection functions for test-plan artifact
 import tempfile
 from pathlib import Path
 
-from scripts.artifact_utils import (
+from scripts.utils.frontmatter_utils import (
     read_frontmatter,
     write_frontmatter,
     update_frontmatter,

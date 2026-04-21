@@ -1,12 +1,13 @@
-"""Artifact schema definitions, frontmatter read/write/validate for test plan artifacts.
+"""
+Schema definitions and validation for test plan artifacts.
 
-Owns all structured metadata for test plan, test case, and test gap artifacts.
-Skills and scripts use this module instead of regex-parsing markdown prose.
+Defines schemas for:
+- test-plan (TestPlan.md)
+- test-case (TC-*.md)
+- test-gaps (TestPlanGaps.md)
+- test-plan-review (TestPlanReview.md)
 
-Frontmatter is stored as YAML between --- delimiters at the top of markdown files.
-
-Requires:
-    uv pip install -r requirements.txt
+Provides validation and default value application.
 """
 
 import os
@@ -101,6 +102,16 @@ SCHEMAS = {
             "required": False,
             "enum": ["Not Started", "In Progress", "Complete", "N/A"],
             "default": "Not Started",
+        },
+        "automation_file": {
+            "type": "string",
+            "required": False,
+            "default": None,
+        },
+        "automation_function": {
+            "type": "string",
+            "required": False,
+            "default": None,
         },
         "last_updated": {
             "type": "string",
@@ -454,129 +465,3 @@ def get_schema_yaml(schema_type):
     return yaml.dump(output, default_flow_style=False, sort_keys=False)
 
 
-# ─── Frontmatter Read/Write ────────────────────────────────────────────────────
-
-_FRONTMATTER_RE = re.compile(
-    r'^---\s*\n(.*?\n)---\s*\n', re.DOTALL)
-
-
-def read_frontmatter(path):
-    """Read and parse YAML frontmatter from a markdown file.
-
-    Returns:
-        (data_dict, body_string) — frontmatter as dict, remainder as string.
-        Returns ({}, full_content) if no frontmatter found.
-    """
-    with open(path, encoding="utf-8") as f:
-        content = f.read()
-
-    match = _FRONTMATTER_RE.match(content)
-    if not match:
-        return {}, content
-
-    yaml_str = match.group(1)
-    body = content[match.end():]
-
-    data = yaml.safe_load(yaml_str)
-    if not isinstance(data, dict):
-        return {}, content
-
-    return data, body
-
-
-def read_frontmatter_validated(path, schema_type):
-    """Read frontmatter and validate against schema.
-
-    Returns:
-        (data_dict, body_string)
-
-    Raises:
-        ValidationError: if frontmatter fails validation
-        FileNotFoundError: if file doesn't exist
-    """
-    data, body = read_frontmatter(path)
-    if not data:
-        raise ValidationError(f"No frontmatter found in {path}")
-
-    apply_defaults(data, schema_type)
-    errors = validate(data, schema_type)
-    if errors:
-        raise ValidationError(
-            f"Frontmatter validation failed in {path}:\n"
-            + "\n".join(f"  - {e}" for e in errors))
-
-    return data, body
-
-
-def write_frontmatter(path, data, schema_type):
-    """Write/update YAML frontmatter on a markdown file.
-
-    Validates data against the schema before writing. Preserves the
-    markdown body below the frontmatter. Creates the file if it doesn't
-    exist (with empty body).
-
-    Args:
-        path: file path
-        data: dict of frontmatter fields
-        schema_type: one of the keys in SCHEMAS
-
-    Raises:
-        ValidationError: if data fails schema validation
-    """
-    apply_defaults(data, schema_type)
-    errors = validate(data, schema_type)
-    if errors:
-        raise ValidationError(
-            f"Frontmatter validation failed:\n"
-            + "\n".join(f"  - {e}" for e in errors))
-
-    body = ""
-    if os.path.exists(path):
-        _, body = read_frontmatter(path)
-
-    yaml_str = yaml.dump(data, default_flow_style=False, sort_keys=False,
-                         allow_unicode=True)
-    content = f"---\n{yaml_str}---\n{body}"
-
-    parent = os.path.dirname(path)
-    if parent:
-        os.makedirs(parent, exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(content)
-
-
-def update_frontmatter(path, updates, schema_type):
-    """Merge updates into existing frontmatter and rewrite.
-
-    Reads existing frontmatter, merges updates (overwriting on conflict),
-    validates, and writes back.
-
-    Args:
-        path: file path (must exist)
-        updates: dict of fields to add/update
-        schema_type: schema to validate against
-
-    Raises:
-        ValidationError: if merged data fails validation
-        FileNotFoundError: if file doesn't exist
-    """
-    data, body = read_frontmatter(path)
-    for key, value in updates.items():
-        if isinstance(value, dict) and isinstance(data.get(key), dict):
-            data[key].update(value)
-        else:
-            data[key] = value
-
-    apply_defaults(data, schema_type)
-    errors = validate(data, schema_type)
-    if errors:
-        raise ValidationError(
-            f"Frontmatter validation failed after update in {path}:\n"
-            + "\n".join(f"  - {e}" for e in errors))
-
-    yaml_str = yaml.dump(data, default_flow_style=False, sort_keys=False,
-                         allow_unicode=True)
-    content = f"---\n{yaml_str}---\n{body}"
-
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(content)

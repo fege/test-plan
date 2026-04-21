@@ -14,8 +14,7 @@ import os
 import re
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from artifact_utils import read_frontmatter, update_frontmatter
+from scripts.utils.frontmatter_utils import read_frontmatter, update_frontmatter
 
 
 def _review_path(feature_dir):

@@ -1,6 +1,6 @@
 import unittest
 
-from scripts.artifact_utils import validate
+from scripts.utils.schemas import validate
 
 
 def _valid_review_data():
