@@ -27,6 +27,51 @@ Claude Code skills for generating test plans and test cases from RHOAI strategie
 | `test-plan.create.test-function` | Generate test function code from TC specification matching repo conventions |
 | `test-plan.score.test-function` | Score generated test function code using 5-criteria quality rubric |
 
+## Installation
+
+### Option 1: Install from Skills Registry (Recommended for Users)
+
+Install skills from the [opendatahub-io/skills-registry](https://github.com/opendatahub-io/skills-registry):
+
+```bash
+# Skills are automatically available in Claude Code
+# Just run /test-plan.create to get started
+```
+
+**One-time setup required** (installs Python utilities):
+
+```bash
+# Clone the test-plan repository to get required scripts
+git clone https://github.com/fege/test-plan ~/.claude/test-plan-scripts
+cd ~/.claude/test-plan-scripts
+
+# Install Python dependencies
+uv pip install -e ".[dev]"
+```
+
+After setup, use skills normally:
+```bash
+/test-plan.create RHAISTRAT-400
+/test-plan.create-cases
+/test-plan.publish
+```
+
+### Option 2: Local Development (For Contributors)
+
+Clone the repository and work locally:
+
+```bash
+# Clone to your development directory
+git clone https://github.com/fege/test-plan ~/Code/test-plan
+cd ~/Code/test-plan
+
+# Install dependencies
+uv pip install -e ".[dev]"
+
+# Skills are available from .claude/skills/ directory
+/test-plan.create RHAISTRAT-400
+```
+
 ## Usage
 
 ```bash
@@ -112,10 +157,16 @@ Claude Code skills for generating test plans and test cases from RHOAI strategie
 
 ## Prerequisites
 
-- Claude Code installed
-- Atlassian MCP server configured (for Jira strategy fetching)
+### Required for All Users
+- [Claude Code](https://claude.ai/code) installed
+- [uv](https://docs.astral.sh/uv/) (Python package manager)
 - Git installed
-- GitHub CLI (`gh`) installed and authenticated (for publishing and feedback resolution)
+- Python 3.10 or higher
+
+### Required for Specific Features
+- **Jira integration**: [Atlassian MCP server](https://support.atlassian.com/atlassian-rovo-mcp-server/docs/getting-started-with-the-atlassian-remote-mcp-server/) configured (for `/test-plan.create`)
+- **GitHub publishing**: [GitHub CLI (`gh`)](https://cli.github.com/) installed and authenticated (for `/test-plan.publish` and `/test-plan.resolve-feedback`)
+- **Test implementation**: Local or cloned target repositories (for `/test-plan.case-implement`)
 
 ## Repository Structure
 
