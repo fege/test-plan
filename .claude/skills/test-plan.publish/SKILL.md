@@ -140,10 +140,20 @@ If the user declines, stop.
 
    **Rationale**: Creating the branch from `main` (rather than from the current HEAD) ensures that only the test plan artifacts are included in the PR, not any unrelated changes that may exist in the user's current working branch. The "add commit on top" option is useful for iterative updates without losing PR review history.
 
-2. Stage all artifacts in the feature directory:
+2. Stage only public artifacts in the feature directory:
    ```bash
-   git add <feature_dir>/
+   # Always stage these required files
+   git add <feature_dir>/TestPlan.md <feature_dir>/README.md
+
+   # Stage optional files if they exist
+   [ -f <feature_dir>/TestPlanGaps.md ] && git add <feature_dir>/TestPlanGaps.md
+   [ -f <feature_dir>/TestPlanReview.md ] && git add <feature_dir>/TestPlanReview.md
+
+   # Stage test_cases directory if it exists
+   [ -d <feature_dir>/test_cases ] && git add <feature_dir>/test_cases/
    ```
+
+   **Important**: This selectively stages only the public artifacts, excluding internal working files like `.review-state.json`, `repo_instructions.md`, `test_implementation_conventions.md`, and `test_scores/` which are meant for internal orchestration only.
 
 3. Commit with a descriptive message. Use a heredoc to avoid shell injection from frontmatter values:
    ```bash
