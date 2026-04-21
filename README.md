@@ -11,6 +11,7 @@ Claude Code skills for generating test plans and test cases from RHOAI strategie
 | `/test-plan.create` | Generate a test plan from a strategy (RHAISTRAT or RHOAIENG), with optional ADR |
 | `/test-plan.create-cases` | Generate individual test case files from an existing test plan |
 | `/test-plan.case-implement` | Generate executable test automation code from TC specifications with intelligent placement |
+| `/test-plan.ui-verify` | Verify UI test cases from a PR against a live ODH/RHOAI cluster via Playwright — see [README](.claude/skills/test-plan.ui-verify/README.md) |
 | `/test-plan.publish` | Publish test plan artifacts to GitHub — branch, commit, and open a PR |
 | `/test-plan.resolve-feedback` | Assess PR review comments, let the user decide what to apply, and push updates |
 | `/test-plan.score` | Score an existing test plan using quality rubric (without auto-revision) |
@@ -248,7 +249,10 @@ Contributors testing skills can use `--output-dir` to force creation in the curr
 │   └── test-case-template.md
 ├── test-plan.publish/
 │   └── SKILL.md
-└── test-plan.resolve-feedback/
+├── test-plan.resolve-feedback/
+│   └── SKILL.md
+└── test-plan.ui-verify/
+    ├── README.md
     └── SKILL.md
 
 scripts/
