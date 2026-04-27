@@ -2,7 +2,7 @@
 name: test-plan.resolve-gaps
 description: Cross-reference existing test plan gaps with new analyzer findings and documentation to determine which gaps are resolved and which remain open.
 user-invocable: false
-model: opus
+model: sonnet
 allowedTools:
   - Read
 ---

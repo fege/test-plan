@@ -2,7 +2,7 @@
 name: test-plan.merge
 description: Intelligently merge new analyzer findings into an existing test plan, preserving user edits while incorporating updates from new documentation.
 user-invocable: false
-model: opus
+model: sonnet
 allowedTools:
   - Read
   - Write

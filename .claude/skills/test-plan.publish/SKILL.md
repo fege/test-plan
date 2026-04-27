@@ -2,7 +2,7 @@
 name: test-plan.publish
 description: Publish test plan artifacts to GitHub — creates a branch, commits all artifacts, and opens a PR with optional reviewer assignment.
 user-invocable: true
-model: opus
+model: sonnet
 allowedTools:
   - Read
   - Bash
