@@ -325,7 +325,19 @@ def main() -> int:
         except Exception:
             pass
 
-        # 6. Optional: highlight the target element with pointer label
+        # 6. Screenshot — taken BEFORE selector highlight so any open overlay (dropdown,
+        #    menu, popover) is still in the DOM. The highlight step below appends elements
+        #    to document.body which can trigger mutation-based close handlers on overlays.
+        SESSION.mkdir(parents=True, exist_ok=True)
+        safe_suffix = args.screenshot[:40].replace(" ", "-").lower()
+        fname = SESSION / f"{args.tc}-{safe_suffix}.png"
+        try:
+            page.screenshot(path=str(fname))
+        except Exception:
+            pass  # screenshot failure never blocks the assertion result
+
+        # 7. Optional: highlight the target element with pointer label (after screenshot
+        #    so DOM mutations don't close open overlays before the image is captured)
         if args.selector:
             safe_sel = args.selector.replace("'", "\\'")
             safe_label = args.what.replace("'", " ").replace('"', " ")[:60]
@@ -349,17 +361,10 @@ def main() -> int:
                     f"}}",
                     [args.selector, outline, bg, color, args.what[:60]]
                 )
+                # Second screenshot with element highlighted
+                page.screenshot(path=str(fname))
             except Exception:
                 pass
-
-        # 7. Screenshot — ensure session dir exists (symlink may not be created yet)
-        SESSION.mkdir(parents=True, exist_ok=True)
-        safe_suffix = args.screenshot[:40].replace(" ", "-").lower()
-        fname = SESSION / f"{args.tc}-{safe_suffix}.png"
-        try:
-            page.screenshot(path=str(fname))
-        except Exception:
-            pass  # screenshot failure never blocks the assertion result
 
         # 8. Clean up overlays
         try:
