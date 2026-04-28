@@ -90,6 +90,19 @@ python3 <SKILL_DIR>/scripts/ui_assert.py \
 
 Always pass `--title` using `tc["title"]` from the context — it is stored in the report log so that `report.html` shows real TC names instead of just IDs.
 
+**For ephemeral UI state** (dropdowns, menus, accordions that close between tool calls), use `--click-before` to open the container and assert its contents in one atomic call. Never open with a separate `ui_interact.py click` and assert in the next call — the container will be closed by then:
+
+```bash
+python3 <SKILL_DIR>/scripts/ui_assert.py \
+  --tc <TC_ID> \
+  --title "<TC title from ctx>" \
+  --click-before "Application launcher" \
+  --what "<Expected Result text>" \
+  --expected "<expected outcome>" \
+  --js "<JS that reads content from the now-open container>" \
+  --screenshot verify-<short-description>
+```
+
 **If the assertion FAILs because page state was not ready** (e.g. a section needed expanding first), fix the state via `ui_interact.py`, then re-assert with `--replace` to remove the ghost FAIL:
 
 ```bash

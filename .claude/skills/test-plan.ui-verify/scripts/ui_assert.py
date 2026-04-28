@@ -94,19 +94,102 @@ def update_log(tc_id: str, what: str, expected: str, result: str, detail: str,
     TC_LOG.write_text(json.dumps(log, indent=2))
 
 
+def _click_before(page, description: str) -> bool:
+    """Click an element to open ephemeral UI state (dropdown, menu, accordion) before asserting.
+
+    Mirrors the tier strategy of do_click in ui_interact.py so behaviour is consistent.
+    Returns True to continue with the assertion, False if the click caused unintended
+    navigation (caller should return exit 2 / WRONG_PAGE in that case).
+
+    If the element is not found the function still returns True — the JS assertion
+    that follows will FAIL with the real reason, which is the correct logged outcome.
+    """
+    from urllib.parse import urlparse
+    url_before = page.url
+    clicked = False
+
+    # Tier 1: Playwright role-based — exact match first, then partial (same order as do_click)
+    for exact in (True, False):
+        if clicked:
+            break
+        for role in ("button", "link", "menuitem", "tab"):
+            try:
+                loc = page.get_by_role(role, name=description, exact=exact)
+                if loc.count() > 0:
+                    loc.first.scroll_into_view_if_needed()
+                    loc.first.click()
+                    page.wait_for_load_state("domcontentloaded")
+                    label = "exact" if exact else "partial"
+                    print(f"  --click-before: ✅ [role={role} {label}={description!r}]", flush=True)
+                    clicked = True
+                    break
+            except Exception:
+                continue
+
+    # Tier 2: JS text / aria-label scan (same as do_click tier 3)
+    if not clicked:
+        try:
+            match = page.evaluate(
+                """(desc) => {
+                    const els = [...document.querySelectorAll(
+                        'button,a,[role=button],[role=menuitem],[role=tab]'
+                    )];
+                    const t = e => (e.textContent || '').trim();
+                    const el = els.find(e => t(e) === desc || e.getAttribute('aria-label') === desc)
+                              || els.find(e => t(e).startsWith(desc + ' ') || t(e).startsWith(desc + '\\n'));
+                    if (!el) return null;
+                    el.scrollIntoView({block: 'center'}); el.click();
+                    return (t(el) || el.getAttribute('aria-label') || '').slice(0, 60);
+                }""",
+                description,
+            )
+        except Exception:
+            match = None
+        if match:
+            page.wait_for_load_state("domcontentloaded")
+            print(f"  --click-before: ✅ [js→ {match!r}]", flush=True)
+            clicked = True
+
+    if not clicked:
+        print(
+            f"  --click-before: ⚠️  '{description}' not found — "
+            f"proceeding; assertion will report the actual failure",
+            flush=True,
+        )
+        return True  # let the JS assertion run and FAIL with the real reason
+
+    # Navigation guard: if the click sent us to an auth page or a different origin, abort.
+    # A hash or query-string change on the same origin is fine (tab switches, anchors).
+    url_after = page.url
+    if url_before != url_after:
+        b, a = urlparse(url_before), urlparse(url_after)
+        if b.netloc != a.netloc or any(p in a.path for p in ("/oauth/", "/login")):
+            print(
+                f"  --click-before: ⚠️  unintended navigation "
+                f"{url_before!r} → {url_after!r}",
+                flush=True,
+            )
+            return False  # caller will return exit 2 (WRONG_PAGE)
+
+    return True
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--tc",         required=True)
-    parser.add_argument("--title",      default="",    help="Human-readable TC title (stored in log for report)")
-    parser.add_argument("--what",       required=True)
-    parser.add_argument("--expected",   default="")
-    parser.add_argument("--js",         required=True)
-    parser.add_argument("--screenshot", default="verify")
-    parser.add_argument("--selector",   default="")
-    parser.add_argument("--inspect",    action="store_true",
+    parser.add_argument("--tc",           required=True)
+    parser.add_argument("--title",        default="",  help="Human-readable TC title (stored in log for report)")
+    parser.add_argument("--what",         required=True)
+    parser.add_argument("--expected",     default="")
+    parser.add_argument("--js",           required=True)
+    parser.add_argument("--screenshot",   default="verify")
+    parser.add_argument("--selector",     default="")
+    parser.add_argument("--click-before", default="",
+                        help="Click this element before asserting. Use for ephemeral UI state "
+                             "(dropdowns, menus, accordions) that close between separate tool calls.")
+    parser.add_argument("--inspect",      action="store_true",
                         help="Diagnostic only — run JS and screenshot but DO NOT log to TC log or change verdict")
-    parser.add_argument("--replace",    action="store_true",
+    parser.add_argument("--replace",      action="store_true",
                         help="Replace any previous assertion with the same --what text for this TC. "
                              "Use when re-asserting after fixing page state to remove ghost FAIL entries.")
     args = parser.parse_args()
@@ -133,7 +216,14 @@ def main() -> int:
             print(f"WRONG_PAGE: 404 or empty at {page.url}", flush=True)
             return 2
 
-        # 3. Show blue "Checking" banner (cosmetic — failures are silenced)
+        # 3. Click-before — open ephemeral UI state (dropdown/menu) before asserting.
+        #    Runs before the banner so the click is not confused by overlay injection.
+        if args.click_before:
+            if not _click_before(page, args.click_before):
+                print(f"WRONG_PAGE: --click-before caused navigation to {page.url}", flush=True)
+                return 2
+
+        # 4. Show blue "Checking" banner (cosmetic — failures are silenced)
         safe_what = args.what.replace("'", " ").replace('"', " ")[:120]
         try:
             page.evaluate(
