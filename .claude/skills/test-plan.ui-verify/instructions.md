@@ -88,6 +88,8 @@ python3 <SKILL_DIR>/scripts/ui_assert.py \
   --screenshot verify-<short-description>
 ```
 
+Always highlight the verified element inside `--js` by setting `el.style.outline='3px solid green'` (PASS) or `'3px solid red'` (FAIL) on the found element before returning the verdict. This records what was actually checked in the screenshot without closing open overlays — a style change on an existing element does not trigger mutation observers. The outline is automatically removed by the cleanup step. Only use `--selector` for static page elements where a pointer label is also wanted.
+
 Always pass `--title` using `tc["title"]` from the context — it is stored in the report log so that `report.html` shows real TC names instead of just IDs.
 
 **For ephemeral UI state** (dropdowns, menus, accordions that close between tool calls), use `--click-before` to open the container and assert its contents in one atomic call. Always pair it with `--retry 1` — if the container was already open and the click toggled it closed, the retry re-clicks to reopen it. Never open with a separate `ui_interact.py click` and assert in the next call — the container will be closed by then:
@@ -119,6 +121,8 @@ python3 <SKILL_DIR>/scripts/ui_assert.py --tc <TC_ID> --title "..." \
   --retry 2 \
   --what "..." --expected "..." --js "() => ..." --screenshot verify-<desc>
 ```
+
+**When the expected value depends on the environment** (URL hostname, resource ID, cluster-specific name), always run `--inspect` first to read the actual current value, then write the assertion from what you observe. Never assume a value from a TC description — names used in TCs (route names, service names, pattern labels) often do not appear literally in the running system's URLs or DOM.
 
 **When checking an element's attribute** (href, text, state), always find the element first and then read its value — never search for elements that already contain the target value. An element exists regardless of what value it currently holds; searching only for the new value misses the case where it exists with the old value and produces a misleading "not found" failure. See `js-patterns.md` for the correct pattern.
 
