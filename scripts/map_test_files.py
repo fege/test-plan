@@ -34,8 +34,8 @@ from functools import partial
 from pathlib import Path
 from typing import Dict, List
 
-from .utils.tc_parser import extract_category_from_tc_id, extract_title_from_tc_file
-from .utils.text_utils import sanitize_to_snake_case
+from scripts.utils.tc_parser import extract_category_from_tc_id, extract_title_from_tc_file
+from scripts.utils.text_utils import sanitize_to_snake_case
 
 
 def _validate_tc_file(tc_dir: Path, tc_id: str) -> Path:

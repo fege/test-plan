@@ -13,9 +13,9 @@ import json
 import sys
 from pathlib import Path
 
-from .utils.component_map import get_repo_for_component
-from .utils.frontmatter_utils import read_frontmatter
-from .utils.repo_discovery import extract_repo_indicators
+from scripts.utils.component_map import get_repo_for_component
+from scripts.utils.frontmatter_utils import read_frontmatter
+from scripts.utils.repo_discovery import extract_repo_indicators
 
 
 def detect_components(feature_dir: str) -> str:

@@ -70,7 +70,7 @@ If installation fails, inform the user and do NOT proceed. Once installed, all P
 
 1. **Use the shared locate-feature-dir utility**:
    ```bash
-   result=$(uv run python ${CLAUDE_SKILL_DIR}/scripts/repo.py locate-feature-dir "<source>")
+   result=$(cd $(git -C ${CLAUDE_SKILL_DIR} rev-parse --show-toplevel) && uv run python scripts/repo.py locate-feature-dir "<source>")
    if [ $? -ne 0 ]; then
        echo "$result"
        exit 1

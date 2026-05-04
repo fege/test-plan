@@ -30,7 +30,7 @@ import json
 import sys
 from pathlib import Path
 
-from .utils.frontmatter_utils import read_frontmatter
+from scripts.utils.frontmatter_utils import read_frontmatter
 
 
 def validate_feature_dir(feature_dir: str) -> str:

@@ -70,7 +70,7 @@ Run `gh auth status` via Bash. If it fails, inform the user that `gh` CLI must b
 Use the shared `locate-feature-dir` utility to find the test plan:
 
 ```bash
-result=$(uv run python ${CLAUDE_SKILL_DIR}/scripts/repo.py locate-feature-dir "<source>")
+result=$(cd $(git -C ${CLAUDE_SKILL_DIR} rev-parse --show-toplevel) && uv run python scripts/repo.py locate-feature-dir "<source>")
 if [ $? -ne 0 ]; then
     echo "$result"
     exit 1
@@ -106,9 +106,7 @@ uv run python ${CLAUDE_SKILL_DIR}/scripts/frontmatter.py validate <feature_dir>/
 
 If `test_cases/TC-*.md` files exist, validate them:
 ```bash
-for f in <feature_dir>/test_cases/TC-*.md; do
-    uv run python ${CLAUDE_SKILL_DIR}/scripts/frontmatter.py validate "$f"
-done
+(cd $(git -C ${CLAUDE_SKILL_DIR} rev-parse --show-toplevel) && uv run python scripts/validate_test_cases.py <feature_dir> test-case)
 ```
 
 #### 0.5 Check for clean working state
@@ -231,12 +229,15 @@ If the user declines, stop.
 
    if [ -n "$current_repo" ] && [ -n "$skill_repo_root" ] && [ "$current_repo" = "$skill_repo_root" ]; then
        echo "⚠ Currently in skill repository, switching to publish directory"
-       cd "$publish_repo_root" || { echo "❌ Failed to cd to $publish_repo_root"; exit 1; }
    fi
+
+   # Always cd to publish_repo_root
+   cd "$publish_repo_root" || { echo "❌ Failed to cd to $publish_repo_root"; exit 1; }
+   echo "✓ Working in: $(pwd)"
 
    # Verify we're in a git repo (or initialize one if needed)
    if ! git rev-parse --git-dir > /dev/null 2>&1; then
-       echo "Initializing git repository in $publish_repo_root"
+       echo "Initializing git repository"
        git init
        git config user.name "$(git config --global user.name)"
        git config user.email "$(git config --global user.email)"

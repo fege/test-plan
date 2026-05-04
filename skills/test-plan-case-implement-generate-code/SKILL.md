@@ -3,6 +3,7 @@ name: test-plan-case-implement-generate-code
 description: Generate test code files from test cases with quality scoring and revision (internal sub-agent)
 context: fork
 model: opus
+user-invocable: false
 allowedTools:
   - Read
   - Write
@@ -37,7 +38,7 @@ For each file in `file_mapping`:
 
 2. **If file exists**, list existing functions:
    ```bash
-   uv run python ${CLAUDE_SKILL_DIR}/../../scripts/list_test_functions.py "$full_file_path"
+   (cd $(git -C ${CLAUDE_SKILL_DIR} rev-parse --show-toplevel) && uv run python scripts/list_test_functions.py "$full_file_path")
    ```
    
    Returns JSON with all test functions: `{"functions": [{"name": "...", "line": 42, "docstring": "..."}]}`
@@ -148,7 +149,7 @@ For each file with valid syntax:
 
 2. Parse score:
    ```bash
-   uv run python ${CLAUDE_SKILL_DIR}/../../scripts/parse_test_score.py test_scores/<tc_id>_score.md
+   (cd $(git -C ${CLAUDE_SKILL_DIR} rev-parse --show-toplevel) && uv run python scripts/parse_test_score.py test_scores/<tc_id>_score.md)
    ```
 
 4. **Handle verdict based on score:**

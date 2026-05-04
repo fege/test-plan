@@ -31,7 +31,7 @@ import yaml
 from pathlib import Path
 from typing import List, Dict
 
-from .utils.frontmatter_utils import read_frontmatter, write_frontmatter
+from scripts.utils.frontmatter_utils import read_frontmatter, write_frontmatter
 
 
 def update_tc_frontmatter(feature_dir: str, updates: List[Dict]) -> str:

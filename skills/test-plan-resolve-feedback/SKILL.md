@@ -64,7 +64,7 @@ Parse repo name from `<owner>/<repo>`.
 
 **Check if repo exists locally**:
 ```bash
-repo_path=$(uv run python ${CLAUDE_SKILL_DIR}/scripts/repo.py find "<repo_name>")
+repo_path=$(cd $(git -C ${CLAUDE_SKILL_DIR} rev-parse --show-toplevel) && uv run python scripts/repo.py find "<repo_name>")
 ```
 
 If found (exit code 0, prints path):
@@ -88,7 +88,7 @@ fi
 If NOT found (exit code 1, empty output):
 - Clone the repo:
   ```bash
-  repo_path=$(uv run python ${CLAUDE_SKILL_DIR}/scripts/repo.py clone "<repo_url>" "~/Code/<repo_name>")
+  repo_path=$(cd $(git -C ${CLAUDE_SKILL_DIR} rev-parse --show-toplevel) && uv run python scripts/repo.py clone "<repo_url>" "~/Code/<repo_name>")
   ```
 - Checkout PR branch:
   ```bash
@@ -209,9 +209,7 @@ uv run python ${CLAUDE_SKILL_DIR}/scripts/frontmatter.py validate <feature_dir>/
 
 If test cases were modified:
 ```bash
-for f in <feature_dir>/test_cases/TC-*.md; do
-    uv run python ${CLAUDE_SKILL_DIR}/scripts/frontmatter.py validate "$f"
-done
+(cd $(git -C ${CLAUDE_SKILL_DIR} rev-parse --show-toplevel) && uv run python scripts/validate_test_cases.py <feature_dir> test-case)
 ```
 
 If any validation fails, fix the issue before proceeding.

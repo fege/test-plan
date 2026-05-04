@@ -27,9 +27,9 @@ Output (JSON):
 import json
 import sys
 
-from .detect_components import detect_components
-from .utils.repo_utils import find_known_repo
-from .validate_feature_dir import validate_feature_dir
+from scripts.detect_components import detect_components
+from scripts.utils.repo_utils import find_known_repo
+from scripts.validate_feature_dir import validate_feature_dir
 
 
 def run_preflight(feature_dir: str) -> str:

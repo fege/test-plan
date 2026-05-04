@@ -20,7 +20,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-from .utils.frontmatter_utils import read_frontmatter
+from scripts.utils.frontmatter_utils import read_frontmatter
 
 
 def filter_test_cases(feature_dir: str, tc_ids: List[str]) -> str:

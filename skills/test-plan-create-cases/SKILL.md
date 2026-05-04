@@ -73,7 +73,7 @@ If installation fails, inform the user and do NOT proceed. Once installed, all P
 
 1. **Use the shared locate-feature-dir utility**:
    ```bash
-   result=$(uv run python ${CLAUDE_SKILL_DIR}/scripts/repo.py locate-feature-dir "<source>")
+   result=$(cd $(git -C ${CLAUDE_SKILL_DIR} rev-parse --show-toplevel) && uv run python scripts/repo.py locate-feature-dir "<source>")
    if [ $? -ne 0 ]; then
        echo "$result"
        exit 1
@@ -128,7 +128,7 @@ If installation fails, inform the user and do NOT proceed. Once installed, all P
 
 1. **Check for existing test cases**:
    ```bash
-   regen_check=$(uv run python ${CLAUDE_SKILL_DIR}/scripts/tc_regeneration.py check <feature_dir>)
+   regen_check=$(cd $(git -C ${CLAUDE_SKILL_DIR} rev-parse --show-toplevel) && uv run python scripts/tc_regeneration.py check <feature_dir>)
    mode=$(echo "$regen_check" | jq -r '.mode')
    existing_count=$(echo "$regen_check" | jq -r '.existing_count')
    ```
@@ -185,12 +185,13 @@ Process **one category at a time** from Section 5.2. For each category:
    priority: <P0|P1|P2>
    status: Draft
    automation_status: Not Started
-   last_updated: <today_date>
+   last_updated: "<today_date>"
    # upgrade_phase: pre|post|both   # see Step 3.4 — set for ANY TC whose expected results differ between upgrade states
    ---
    ```
 
    - `source_key`: use the value extracted from the test plan's frontmatter in Step 1
+   - `last_updated`: MUST be quoted string (e.g., "2026-05-04"), not unquoted date
    - If the test plan's Section 7.2 is non-trivial, evaluate `upgrade_phase` for every TC before finalising its frontmatter — including TC-UI-*, TC-E2E-*, and all other categories, not just TC-UPGRADE-*. The question is always the same: does this TC's expected behaviour differ between the old and new version? If yes, set the phase. Do not skip this evaluation for any TC.
    - Write the frontmatter directly — validation happens in Step 5.7
    - **Important**: In regeneration mode, files were already read in Step 2.5, so Edit/Write will work correctly
@@ -281,9 +282,7 @@ After generating all test case files and updating the test plan, validate covera
 After all test case files are written, validate their frontmatter in one pass:
 
 ```bash
-for f in <feature_dir>/test_cases/TC-*.md; do
-    uv run python ${CLAUDE_SKILL_DIR}/scripts/frontmatter.py validate "$f"
-done
+(cd $(git -C ${CLAUDE_SKILL_DIR} rev-parse --show-toplevel) && uv run python scripts/validate_test_cases.py <feature_dir> test-case)
 ```
 
 If any file fails validation, fix the frontmatter in that file and re-run the validation.
