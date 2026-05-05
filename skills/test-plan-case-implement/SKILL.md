@@ -179,12 +179,19 @@ Returns: `framework` (str: pytest, unittest, playwright, robot, ginkgo, go-testi
 #### 1.2 Load test conventions
 
 If `use_odh_context == True`:
-1. Use `scripts/utils/repo_utils.py::extract_conventions_from_context(test_context)` to extract:
-   - File patterns, function patterns, import style, markers
-   - Linting tools and commands
-   - Testing directories and execution commands
-2. Generate conventions summary markdown
-3. Write to `<feature_dir>/test_implementation_conventions.md`
+
+Extract conventions and format as markdown:
+```bash
+(cd $(git -C ${CLAUDE_SKILL_DIR} rev-parse --show-toplevel) && uv run python scripts/extract_and_format_conventions.py "$feature_dir" "$code_repo_name" "$odh_test_context_path") > <feature_dir>/test_implementation_conventions.md
+```
+
+The script:
+- Loads test context from odh-test-context
+- Saves `test_implementation_context.json` to feature_dir
+- Extracts conventions (file patterns, markers, linting, etc.)
+- Outputs formatted markdown
+
+Set `conventions_file` = `<feature_dir>/test_implementation_conventions.md`
 
 If `use_odh_context == False` (no odh-test-context available):
 1. Conventions will be minimal (framework only, from Step 1.1)
@@ -370,7 +377,7 @@ Present the mapping table to user and ask for confirmation before proceeding to 
 
 ### Step 5: Generate Test Code
 
-**CRITICAL:** Invoke /test-plan-case-implement-generate-code sub-agent - do NOT generate code, call scoring scripts, or create test functions yourself.
+**CRITICAL:** Invoke /test-plan-generate-test-file sub-agents in parallel (one per file) - do NOT generate code yourself.
 
 Identify common setup requirements:
 ```bash
@@ -379,38 +386,64 @@ Identify common setup requirements:
 
 Returns JSON array of preconditions used by 2+ TCs (for fixture generation).
 
-Prepare variables for sub-agent (must be available in context):
-- `file_mapping` - The array from map_test_files.py output
-- `test_cases` - The array of TC dicts from Step 3.3
+Ensure these variables are in context (sub-agents inherit them):
+- `file_mapping` - Array from Step 4
+- `test_cases` - Array from Step 3.3
 - `framework` - From Step 1.1
-- `conventions_file` - Path to test_implementation_conventions.md (if created)
-- `pattern_guide` - Content from load_pattern_guides.py (or null)
-- `repo_instructions` - Content from load_pattern_guides.py (or null)
-- `common_setup_requirements` - From test_analyzer.py output
-- `code_repo_path` - The repository path
-- `feature_dir` - The feature directory path
+- `conventions_file` - Path to conventions (from Step 1.2)
+- `pattern_guide` - Content from Step 1.2b (or null)
+- `repo_instructions` - Content from Step 1.2b (or null)
+- `common_setup_requirements` - From analyze_common_setup.py above
+- `code_repo_path` - Repository path
+- `feature_dir` - Feature directory path
 
-Invoke the forked sub-agent (it will access these variables from context):
-```bash
-/test-plan-case-implement-generate-code
+**Invoke sub-agents in parallel** using Agent tool (one per file in file_mapping):
+
+For each file index i, build prompt with all needed data:
+```
+Agent(
+  subagent_type="test-plan-generate-test-file",
+  description="Generate test file {i}",
+  prompt="""Generate test file from this data:
+
+```json
+{
+  "file_index": {i},
+  "file_path": "{file_mapping[i].file_path}",
+  "test_cases": {json array of TCs for this file},
+  "function_names": {file_mapping[i].function_names},
+  "framework": "{framework}",
+  "conventions_file": "{conventions_file}",
+  "pattern_guide": "{pattern_guide or null}",
+  "repo_instructions": "{repo_instructions or null}",
+  "common_setup_requirements": {common_setup_requirements},
+  "code_repo_path": "{code_repo_path}",
+  "feature_dir": "{feature_dir}"
+}
 ```
 
-**IMPORTANT:** The sub-agent handles ALL code generation including:
-- Checking existing tests (list_test_functions.py)
-- Generating test functions (parallel sub-agents)
-- Validating syntax (py_compile)
-- Scoring quality (via `/test-plan-score-test-function` skill)
-- Auto-revising if needed
+Write result to /tmp/test_plan_results/file_{i}.json
+Return: {{"status": "complete", "file_index": {i}, "result_file": "/tmp/test_plan_results/file_{i}.json"}}"""
+)
+```
 
-**DO NOT** call parse_test_score.py, list_test_functions.py, or /test-plan-score-test-function yourself in this skill. The sub-agent handles all of this.
+**All invocations in one message** for parallel execution. Sub-agents have `context: fork` (isolated, returns clean).
 
-**DO NOT** write test function code yourself. The sub-agent generates all code.
+**Read result files** after all agents complete:
 
-The sub-agent returns JSON with `files_to_write`, `quality_summary`, `draft_files`. Wait for this result before proceeding to Step 6.
+```bash
+for i in $(seq 0 $((${#file_mapping[@]} - 1))); do
+  result=$(cat /tmp/test_plan_results/file_${i}.json)
+  # Parse: file_path, content, tc_ids, functions[], quality_summary, draft_files[], errors[]
+done
+rm -rf /tmp/test_plan_results/
+```
+
+Collect into `files_to_write` array. Proceed immediately to Step 6.
 
 ### Step 6: Write Tests to Repositories
 
-**Your role in this step:** Write the files returned by the sub-agent. Do NOT generate or modify test code.
+**CRITICAL:** Write the files from `files_to_write` array. Do NOT generate or modify test code - just write what the sub-agents returned.
 
 #### 6.1 Write test files
 
@@ -466,7 +499,14 @@ Present validation summary to user.
 
 ### Step 7: Update Test Case Frontmatter and Present Summary
 
-Build updates array from `test_cases` and `file_mapping`, then update in bulk:
+Build updates array from sub-agent results (ONLY for successfully implemented TCs):
+
+**For each sub-agent result:**
+- For each entry in `functions` array (these scored 4+): Create update entry
+- Skip TCs in `draft_files` (scored 0-3, need manual review)
+- Skip TCs in `errors` (generation failed)
+
+Update frontmatter in bulk:
 ```bash
 # updates.json: [{"tc_id": "TC-API-001", "automation_status": "Implemented", "file": "...", "function": "..."}]
 echo "$updates_json" | (cd $(git -C ${CLAUDE_SKILL_DIR} rev-parse --show-toplevel) && uv run python scripts/update_tc_frontmatter.py "$feature_dir" -)
@@ -483,10 +523,17 @@ git push origin <branch_name>
 
 #### 7.2 Present Summary Report
 
+Aggregate quality data from all sub-agent results:
+- Sum quality_summary metrics (ready_count, good_count, revised_count, flagged_count)
+- Collect all draft_files (TCs scored 0-3)
+- Collect all errors (TCs that failed generation)
+
 Display implementation summary:
-- Feature name, source key, TC count
-- Files created with TC mapping
+- Feature name, source key, total TC count
+- Successfully implemented: TC count, files created with TC mapping
 - Test quality distribution (Ready/Good/Revised/Flagged)
+- Draft files requiring manual review (if any): List TC IDs with scores and reasons
+- Failed TCs (if any): List TC IDs with error messages
 - Suggested fixtures (if common setup found)
 - Next steps (review, run tests, create PR)
 

@@ -148,7 +148,7 @@ Each analyzer returns:
 
 ### Step 4: Merge New Findings into TestPlan.md
 
-Invoke the **`test-plan.merge`** sub-agent to intelligently merge new analyzer findings into the existing test plan:
+Invoke the **`test-plan-merge`** forked sub-agent using the Skill tool to intelligently merge new analyzer findings into the existing test plan:
 
 ```
 Skill: test-plan-merge
@@ -172,6 +172,8 @@ Arguments:
 - Detect contradictions between new docs and existing content
 - Make informed decisions about what to merge vs. what to flag for manual review
 - Ground merge decisions in source material rather than trusting analyzer summaries
+
+The sub-agent has `context: fork` so it runs in isolation and returns cleanly.
 
 The merge sub-agent returns:
 - Updated section content for Sections 1-4, 7-9
@@ -211,7 +213,7 @@ The merge sub-agent returns:
 
 ### Step 5: Resolve Gaps
 
-Invoke the **`test-plan.resolve-gaps`** sub-agent to cross-reference old gaps with new findings:
+Invoke the **`test-plan-resolve-gaps`** forked sub-agent using the Skill tool to cross-reference old gaps with new findings:
 
 ```
 Skill: test-plan-resolve-gaps
@@ -228,6 +230,8 @@ Arguments:
 ```
 
 **Rationale**: Same as Step 4 - the agent needs actual document content to verify gap resolution claims (e.g., "API versioning now specified in ADR section 2.3" - agent can check if true).
+
+The sub-agent has `context: fork` so it runs in isolation and returns cleanly.
 
 The sub-agent returns:
 - Resolved gaps (with which doc/finding resolved them)

@@ -28,9 +28,8 @@ End-to-end test planning workflow for RHOAI: generate test plans from strategies
 | `test-plan-merge` | Intelligently merge new analyzer findings into existing test plan |
 | `test-plan-resolve-gaps` | Cross-reference gaps with new findings to determine what's resolved |
 | `test-plan-review` | Review test plan for completeness, consistency, and quality with auto-revision |
-| `test-plan-create-test-function` | Generate test function code from TC specification matching repo conventions |
+| `test-plan-generate-test-file` | Generate complete test file with all functions, quality scoring and auto-revision |
 | `test-plan-score-test-function` | Score generated test function code using 5-criteria quality rubric |
-| `test-plan-case-implement-generate-code` | Generate test code with quality scoring and auto-revision (Step 5 of case-implement) |
 
 ## Installation
 
@@ -131,8 +130,9 @@ Contributors testing skills can use `--output-dir` to force creation in the curr
 - Writing test code, quality scoring, semantic function matching
 
 **Forked Sub-Agents** - Complex multi-step workflows isolated:
-- `test-plan-review` - Quality scoring with auto-revision
-- `test-plan-case-implement-generate-code` - Code generation orchestration
+- `test-plan-review` - Quality scoring with auto-revision  
+- `test-plan-generate-test-file` - Complete test file generation (called in parallel, one per file)
+- `test-plan-score-test-function` - Quality scoring for individual functions
 - Enables parallel execution and cleaner main skills
 
 **No Shell Parsing** - Scripts output JSON, Claude extracts values directly (no jq commands needed)
@@ -233,11 +233,9 @@ Contributors testing skills can use `--output-dir` to force creation in the curr
                     │                     ├── preflight.py (validation + detection)
                     │                     ├── filter_test_cases.py, map_test_files.py
                     │                     ├── test-plan-analyze-placement
-                    │                     └── test-plan-case-implement-generate-code
+                    │                     └── test-plan-generate-test-file (parallel per file)
                     │                         ├── list_test_functions.py (AST)
-                    │                         ├── load_pattern_guides.py
-                    │                         ├── test-plan-create-test-function (per TC, parallel)
-                    │                         ├── test-plan-score-test-function (per TC)
+                    │                         ├── test-plan-score-test-function (per function)
                     │                         └── parse_test_score.py
                     │                     │
                     ▼                     ▼
@@ -310,9 +308,9 @@ skills/
 ├── test-plan-resolve-feedback/
 │   └── SKILL.md
 ├── test-plan-case-implement/
-│   └── SKILL.md            # Main orchestration skill (458 lines)
-├── test-plan-case-implement-generate-code/
-│   └── SKILL.md            # Code generation sub-agent (265 lines)
+│   └── SKILL.md            # Main orchestration skill
+├── test-plan-generate-test-file/
+│   └── SKILL.md            # Test file generation sub-agent
 ├── test-plan-ui-verify/
 │   ├── README.md
 │   └── SKILL.md
