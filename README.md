@@ -4,7 +4,7 @@ End-to-end test planning workflow for RHOAI: generate test plans from strategies
 
 ## Skills
 
-### User-invocable
+### User-invocable (8 skills)
 
 | Skill | Description |
 |-------|-------------|
@@ -16,15 +16,15 @@ End-to-end test planning workflow for RHOAI: generate test plans from strategies
 | `/test-plan-publish` | Publish test plan artifacts to GitHub — branch, commit, and open a PR |
 | `/test-plan-resolve-feedback` | Assess PR review comments, let the user decide what to apply, and push updates |
 | `/test-plan-score` | Score an existing test plan using quality rubric (without auto-revision) |
-| `/test-plan-analyze-risks` | Analyze strategy/ADR to determine test levels, types, priorities, risks |
-| `/test-plan-analyze-endpoints` | Extract feature scope, test objectives, and API endpoints from docs |
-| `/test-plan-analyze-infra` | Identify test environment, data, infrastructure requirements |
-| `/test-plan-analyze-placement` | Recommend test placement (component repo vs downstream) |
 
-### Sub-agents (forked, non-user-invocable)
+### Sub-agents (9 internal skills, forked with `context: fork`)
 
 | Skill | Description |
 |-------|-------------|
+| `test-plan-analyze-endpoints` | Extract feature scope, test objectives, and API endpoints from docs |
+| `test-plan-analyze-risks` | Analyze strategy/ADR to determine test levels, types, priorities, risks |
+| `test-plan-analyze-infra` | Identify test environment, data, infrastructure requirements |
+| `test-plan-analyze-placement` | Recommend test placement (component repo vs downstream) |
 | `test-plan-merge` | Intelligently merge new analyzer findings into existing test plan |
 | `test-plan-resolve-gaps` | Cross-reference gaps with new findings to determine what's resolved |
 | `test-plan-review` | Review test plan for completeness, consistency, and quality with auto-revision |
@@ -124,16 +124,16 @@ Contributors testing skills can use `--output-dir` to force creation in the curr
 **Deterministic Scripts** - Procedural logic extracted to Python scripts (no LLM calls):
 - Feature validation, component detection, TC filtering, file mapping
 - AST-based function extraction, score parsing, frontmatter updates
-- ~500 lines of bash logic → 9 tested Python scripts
+- 22 tested Python scripts
 
 **LLMs Only Where Necessary** - Semantic understanding and code generation:
 - Writing test code, quality scoring, semantic function matching
+- Analyzing requirements, merging findings, resolving gaps
 
-**Forked Sub-Agents** - Complex multi-step workflows isolated:
-- `test-plan-review` - Quality scoring with auto-revision  
-- `test-plan-generate-test-file` - Complete test file generation (called in parallel, one per file)
-- `test-plan-score-test-function` - Quality scoring for individual functions
-- Enables parallel execution and cleaner main skills
+**Sub-Agent Orchestration** - 9 internal skills:
+- **Forked (8 with `context: fork`)**: Analyzers (endpoints, risks, infra, placement), workflow (merge, resolve-gaps), quality (generate-test-file, score-test-function) — clean isolation, parallel execution
+- **In-parent (1 without fork)**: review — writes persistent files in parent context
+- All invoked via Skill tool, deterministic return values
 
 **No Shell Parsing** - Scripts output JSON, Claude extracts values directly (no jq commands needed)
 
