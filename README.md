@@ -49,7 +49,7 @@ This clones the repository and makes skills immediately available. Then install 
 
 ```bash
 cd ~/.claude/plugins/test-plan
-uv pip install -e ".[dev]"
+uv sync --extra dev
 ```
 
 Use skills:
@@ -71,7 +71,7 @@ Clone the repository directly:
 ```bash
 git clone https://github.com/fege/test-plan ~/Code/test-plan
 cd ~/Code/test-plan
-uv pip install -e ".[dev]"
+uv sync --extra dev
 ```
 
 Skills are available from `skills/` directory.
@@ -349,7 +349,7 @@ scripts/
 Install the package in development mode with dev dependencies:
 
 ```bash
-uv pip install -e ".[dev]"
+uv sync --extra dev
 ```
 
 This installs:

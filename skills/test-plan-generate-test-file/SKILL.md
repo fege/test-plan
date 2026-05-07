@@ -157,7 +157,9 @@ Collect each generated function in `functions` array.
 ### Step 5: Validate Syntax
 
 ```bash
-echo "$complete_file" > /tmp/test_file_${file_index}.py
+cat > /tmp/test_file_${file_index}.py << 'PYEOF'
+$complete_file
+PYEOF
 python -m py_compile /tmp/test_file_${file_index}.py 2>&1
 ```
 

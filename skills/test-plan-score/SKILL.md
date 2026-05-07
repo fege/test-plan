@@ -38,7 +38,7 @@ Parse `$ARGUMENTS` to extract:
 
 Install the test-plan package (makes all scripts importable):
 ```bash
-(cd $(git -C ${CLAUDE_SKILL_DIR} rev-parse --show-toplevel) && rm -rf .venv && uv venv && uv pip install -e ".[dev]")
+(cd $(git -C ${CLAUDE_SKILL_DIR} rev-parse --show-toplevel) && uv sync --extra dev)
 ```
 
 If installation fails, inform the user and do NOT proceed. Once installed, all Python scripts will work from any directory.
