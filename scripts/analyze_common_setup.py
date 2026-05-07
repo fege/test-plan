@@ -18,16 +18,14 @@ def analyze_common_setup(feature_dir: str) -> str:
     Returns:
         JSON string with common setup requirements
     """
-    # Get all TC IDs from test_cases/INDEX.md
-    index_file = Path(feature_dir) / "test_cases" / "INDEX.md"
-    if not index_file.exists():
+    # Get all TC IDs by scanning test case files directly
+    # (INDEX.md is derived from TC files, so files are source of truth)
+    tc_dir = Path(feature_dir) / "test_cases"
+    if not tc_dir.exists():
         return json.dumps([])
 
-    tc_ids = []
-    for line in index_file.read_text().splitlines():
-        if line.strip().startswith("- [TC-"):
-            tc_id = line.split("]")[0].split("[")[1]
-            tc_ids.append(tc_id)
+    # Use glob pattern (same as validate_feature_dir, tc_regeneration, etc.)
+    tc_ids = [f.stem for f in tc_dir.glob("TC-*.md")]
 
     if not tc_ids:
         return json.dumps([])

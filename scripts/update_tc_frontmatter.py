@@ -2,7 +2,7 @@
 """
 Update test case frontmatter fields in bulk.
 
-Updates automation_status, file, and function fields for implemented test cases.
+Updates automation_status, automation_file, and automation_function fields for implemented test cases.
 
 Usage:
     python scripts/update_tc_frontmatter.py <feature_dir> <updates.json>
@@ -11,9 +11,9 @@ updates.json format:
     [
         {
             "tc_id": "TC-API-001",
-            "automation_status": "Implemented",
-            "file": "tests/test_api.py",
-            "function": "test_create_notebook"
+            "automation_status": "Complete",
+            "automation_file": "tests/test_api.py",
+            "automation_function": "test_create_notebook"
         }
     ]
 
@@ -27,11 +27,10 @@ Output (JSON):
 
 import json
 import sys
-import yaml
 from pathlib import Path
 from typing import List, Dict
 
-from scripts.utils.frontmatter_utils import read_frontmatter, write_frontmatter
+from scripts.utils.frontmatter_utils import update_frontmatter
 
 
 def update_tc_frontmatter(feature_dir: str, updates: List[Dict]) -> str:
@@ -60,22 +59,11 @@ def update_tc_frontmatter(feature_dir: str, updates: List[Dict]) -> str:
             continue
 
         try:
-            # Read existing frontmatter and body
-            frontmatter, body = read_frontmatter(str(tc_file))
+            # Prepare updates (exclude tc_id)
+            field_updates = {k: v for k, v in update.items() if k != 'tc_id'}
 
-            # Update fields
-            for key, value in update.items():
-                if key != 'tc_id':  # Don't overwrite tc_id
-                    frontmatter[key] = value
-
-            # Write back (no schema validation - just update)
-            with open(tc_file, 'w', encoding='utf-8') as f:
-                # Write frontmatter
-                f.write('---\n')
-                f.write(yaml.dump(frontmatter, default_flow_style=False, allow_unicode=True))
-                f.write('---\n\n')
-                # Write body
-                f.write(body)
+            # Use shared utility (validates against test-case schema and formats consistently)
+            update_frontmatter(str(tc_file), field_updates, "test-case")
 
             updated_tcs.append(tc_id)
 

@@ -41,21 +41,30 @@ def detect_components(feature_dir: str) -> str:
     frontmatter, _ = read_frontmatter(str(testplan_path))
     frontmatter_components_raw = frontmatter.get('components') or []
 
-    # Normalize to list of lowercase strings
+    # Preserve original casing (get_repo_for_component handles case-insensitive lookup)
     frontmatter_components = [
-        c.strip().lower() for c in frontmatter_components_raw if c
+        c.strip() for c in frontmatter_components_raw if c
     ]
 
     # --- Extract content components ---
     tc_dir = feature_path / "test_cases"
     tc_files = [str(f) for f in tc_dir.glob("TC-*.md")] if tc_dir.exists() else []
 
-    # Use existing extraction logic
+    # Use existing extraction logic (returns lowercase)
     indicators = extract_repo_indicators(str(testplan_path), tc_files)
     content_components = indicators.get('components', [])
 
-    # --- Merge components (deduplicate) ---
-    all_components = list(set(frontmatter_components + content_components))
+    # --- Merge components (deduplicate case-insensitively, prefer frontmatter casing) ---
+    all_components_map = {}
+    # Add frontmatter components first (preferred casing)
+    for c in frontmatter_components:
+        all_components_map[c.lower()] = c
+    # Add content components only if not already present
+    for c in content_components:
+        if c.lower() not in all_components_map:
+            all_components_map[c.lower()] = c
+
+    all_components = list(all_components_map.values())
 
     # --- Map components to repos ---
     repos = {c: get_repo_for_component(c) for c in all_components}
